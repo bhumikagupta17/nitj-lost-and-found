@@ -12,6 +12,7 @@ import ItemDetail from './pages/item/ItemDetail.jsx'
 import ClaimForm from './pages/item/ClaimForm.jsx'
 import ChatWindow from './pages/chat/ChatWindow.jsx'
 import AdminPanel from './pages/admin/AdminPanel.jsx'
+import SecurityDesk from './pages/security/SecurityDesk.jsx'
 
 export default function App() {
   return (
@@ -43,6 +44,9 @@ export default function App() {
         } />
         <Route path="/admin" element={
           <ProtectedRoute><AdminPanel /></ProtectedRoute>
+        } />
+        <Route path="/security" element={
+          <ProtectedRoute><SecurityDesk /></ProtectedRoute>
         } />
       </Routes>
     </BrowserRouter>
