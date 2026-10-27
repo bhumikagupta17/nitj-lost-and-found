@@ -7,6 +7,7 @@ import ReportLost from './pages/lost/ReportLost.jsx'
 import Dashboard from './pages/dashboard/Dashboard.jsx'
 import ItemDetail from './pages/item/ItemDetail.jsx'
 import ClaimForm from './pages/item/ClaimForm.jsx'
+import ChatWindow from './pages/chat/ChatWindow.jsx'
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/item/:id" element={<ProtectedRoute><ItemDetail/></ProtectedRoute>}></Route>
         <Route path="/item/:id/claim" element={<ProtectedRoute><ClaimForm/></ProtectedRoute>}></Route>
+        <Route path="/chat/:claimId" element={<ProtectedRoute><ChatWindow /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   )
