@@ -11,7 +11,8 @@ function AccessDenied() {
         <p className="text-5xl mb-4">🚫</p>
         <h2 className="text-lg font-semibold mb-1" style={{ color: '#374151' }}>Access Denied</h2>
         <p className="text-sm mb-4" style={{ color: '#9CA3AF' }}>This page is only for security personnel.</p>
-        <button onClick={() => navigate('/')} className="text-sm hover:underline" style={{ color: '#1C3829' }}>
+        <button onClick={() => navigate('/')} className="text-sm hover:underline active:scale-95 transition-all"
+          style={{ color: '#1C3829' }}>
           Go to Home
         </button>
       </div>
@@ -34,8 +35,8 @@ function ItemCard({ item, onStore, onReturn, actionLoading }) {
 
   return (
     <div className="bg-white rounded-2xl border p-4 hover:shadow-sm transition-all" style={{ borderColor: '#E8E2D8' }}>
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="flex items-center gap-1.5 flex-wrap">
           <span className="text-xs px-2 py-0.5 rounded-full"
             style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
             {item.category}
@@ -48,7 +49,7 @@ function ItemCard({ item, onStore, onReturn, actionLoading }) {
               style={{ backgroundColor: '#FFF7ED', color: '#C2410C' }}>⚠️ Escalated</span>
           )}
         </div>
-        <span className="text-xs" style={{ color: '#9CA3AF' }}>{days}d ago</span>
+        <span className="text-xs shrink-0" style={{ color: '#9CA3AF' }}>{days}d ago</span>
       </div>
 
       <h3 className="font-semibold text-sm mb-1" style={{ color: '#1C2B1E' }}>{item.title}</h3>
@@ -58,8 +59,8 @@ function ItemCard({ item, onStore, onReturn, actionLoading }) {
 
       <div className="h-px my-2" style={{ backgroundColor: '#E8E2D8' }} />
       <div className="flex items-center justify-between text-xs mb-3" style={{ color: '#9CA3AF' }}>
-        <span>📍 {item.location}</span>
-        <span>Found {formatDate(item.created_at)}</span>
+        <span className="truncate mr-2">📍 {item.location}</span>
+        <span className="shrink-0">Found {formatDate(item.created_at)}</span>
       </div>
 
       {item.users && (
@@ -73,19 +74,19 @@ function ItemCard({ item, onStore, onReturn, actionLoading }) {
 
       <div className="flex gap-2">
         <button onClick={() => navigate(`/item/${item.id}`)}
-          className="flex-1 text-xs rounded-xl py-2 border hover:opacity-70 transition-opacity"
+          className="flex-1 text-xs rounded-xl py-2 border hover:opacity-70 active:scale-95 transition-all"
           style={{ borderColor: '#E8E2D8', color: '#374151' }}>
           View Details →
         </button>
         {!isStored ? (
           <button onClick={() => onStore(item.id)} disabled={actionLoading === item.id}
-            className="flex-1 text-xs text-white rounded-xl py-2 hover:opacity-90 disabled:opacity-50 font-medium"
+            className="flex-1 text-xs text-white rounded-xl py-2 hover:opacity-90 disabled:opacity-50 font-medium active:scale-95 transition-all"
             style={{ backgroundColor: '#1C3829' }}>
             {actionLoading === item.id ? 'Saving...' : '📦 Mark Stored'}
           </button>
         ) : (
           <button onClick={() => onReturn(item.id)} disabled={actionLoading === item.id}
-            className="flex-1 text-xs text-white rounded-xl py-2 hover:opacity-90 disabled:opacity-50 font-medium"
+            className="flex-1 text-xs text-white rounded-xl py-2 hover:opacity-90 disabled:opacity-50 font-medium active:scale-95 transition-all"
             style={{ backgroundColor: '#2D6A4F' }}>
             {actionLoading === item.id ? 'Saving...' : '✅ Mark Returned'}
           </button>
@@ -152,22 +153,22 @@ export default function SecurityDesk() {
     <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
 
       {/* Header */}
-      <div className="bg-white border-b px-6 py-4" style={{ borderColor: '#E8E2D8' }}>
+      <div className="bg-white border-b px-4 sm:px-6 py-3 sm:py-4" style={{ borderColor: '#E8E2D8' }}>
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+            <h1 className="text-base sm:text-lg font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
               🚨 Security Desk
             </h1>
             <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
               Manage escalated items and items in physical storage.
             </p>
           </div>
-          <button onClick={() => navigate('/')} className="text-sm hover:opacity-70"
+          <button onClick={() => navigate('/')} className="text-sm hover:opacity-70 active:scale-95 transition-all"
             style={{ color: '#6B7280' }}>← Home</button>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
 
         {/* Stats */}
         <StatsRow />
@@ -176,7 +177,7 @@ export default function SecurityDesk() {
         <div className="flex gap-1 rounded-2xl p-1 my-5 w-fit" style={{ backgroundColor: '#E8E2D8' }}>
           {tabs.map(t => (
             <button key={t.key} onClick={() => setTab(t.key)}
-              className="px-4 py-2 rounded-xl text-sm font-medium transition-all"
+              className="px-3 sm:px-4 py-2 rounded-xl text-sm font-medium transition-all active:scale-95"
               style={tab === t.key
                 ? { backgroundColor: '#FFFFFF', color: '#1C2B1E', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }
                 : { color: '#6B7280' }

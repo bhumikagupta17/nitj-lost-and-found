@@ -37,7 +37,7 @@ export default function ClaimForm() {
     setError('')
 
     if (proof.trim().length < 20) {
-      setError('Please write at least 20 characters describing the item. Be specific — colour, brand, what\'s inside, any marks.')
+      setError("Please write at least 20 characters describing the item. Be specific — colour, brand, what's inside, any marks.")
       return
     }
 
@@ -46,7 +46,6 @@ export default function ClaimForm() {
     const { data: existing } = await supabase
       .from('claims').select('id')
       .eq('found_item_id', id).eq('claimant_id', user.id).maybeSingle()
-
 
     if (existing) {
       setError('You have already submitted a claim for this item.')
@@ -76,11 +75,16 @@ export default function ClaimForm() {
   if (error && !item) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F0E8' }}>
-        <div className="text-center">
+        <div className="text-center px-6">
           <p className="text-2xl mb-2">😕</p>
           <p className="text-sm" style={{ color: '#6B7280' }}>{error}</p>
-          <button onClick={() => navigate('/')} className="mt-4 text-sm hover:underline"
-            style={{ color: '#1C3829' }}>← Back to home</button>
+          <button
+            onClick={() => navigate('/')}
+            className="mt-4 text-sm hover:underline active:opacity-70"
+            style={{ color: '#1C3829' }}
+          >
+            ← Back to home
+          </button>
         </div>
       </div>
     )
@@ -99,28 +103,37 @@ export default function ClaimForm() {
     <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
 
       {/* Header */}
-      <div className="bg-white border-b px-6 py-4" style={{ borderColor: '#E8E2D8' }}>
-        <div className="max-w-xl mx-auto flex items-center justify-between">
-          <button onClick={() => navigate(`/item/${id}`)}
-            className="text-sm hover:opacity-70 transition-opacity" style={{ color: '#6B7280' }}>
-            ← Back to item
+      <div className="bg-white border-b" style={{ borderColor: '#E8E2D8' }}>
+        <div className="max-w-xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <button
+            onClick={() => navigate(`/item/${id}`)}
+            className="text-sm hover:opacity-70 active:opacity-50 transition-opacity"
+            style={{ color: '#6B7280' }}
+          >
+            ← Back
           </button>
           <span className="text-xs" style={{ color: '#9CA3AF' }}>Ownership Proof</span>
         </div>
       </div>
 
-      <div className="max-w-xl mx-auto px-6 py-8 space-y-4">
+      <div className="max-w-xl mx-auto px-4 sm:px-6 py-5 sm:py-8 space-y-3 sm:space-y-4">
 
         {/* Item summary */}
-        <div className="bg-white rounded-2xl border p-5" style={{ borderColor: '#E8E2D8' }}>
+        <div className="bg-white rounded-2xl border p-4 sm:p-5" style={{ borderColor: '#E8E2D8' }}>
           <p className="text-xs uppercase tracking-wide mb-2" style={{ color: '#9CA3AF' }}>You are claiming</p>
-          <h2 className="text-base font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+          <h2
+            className="text-base font-bold leading-snug"
+            style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}
+          >
             {item.title}
           </h2>
           <div className="flex flex-wrap gap-2 mt-2">
             {[item.category, `📍 ${item.location}`].map(tag => (
-              <span key={tag} className="text-xs px-2.5 py-1 rounded-full"
-                style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
+              <span
+                key={tag}
+                className="text-xs px-2.5 py-1 rounded-full"
+                style={{ backgroundColor: '#F5F0E8', color: '#374151' }}
+              >
                 {tag}
               </span>
             ))}
@@ -142,8 +155,8 @@ export default function ClaimForm() {
         </div>
 
         {/* Proof form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="bg-white rounded-2xl border p-5" style={{ borderColor: '#E8E2D8' }}>
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          <div className="bg-white rounded-2xl border p-4 sm:p-5" style={{ borderColor: '#E8E2D8' }}>
             <label className="block text-sm font-semibold mb-1" style={{ color: '#1C2B1E' }}>
               Describe the item to prove it's yours <span className="text-red-500">*</span>
             </label>
@@ -153,7 +166,7 @@ export default function ClaimForm() {
             <textarea
               value={proof}
               onChange={e => setProof(e.target.value)}
-              rows={6}
+              rows={5}
               placeholder={placeholder}
               className={`${INPUT} resize-none`}
             />
@@ -170,26 +183,36 @@ export default function ClaimForm() {
           </div>
 
           {/* Warning */}
-          <div className="rounded-2xl p-4 text-xs" style={{ backgroundColor: '#F5F0E8', color: '#6B7280' }}>
+          <div
+            className="rounded-2xl p-4 text-xs"
+            style={{ backgroundColor: '#F5F0E8', color: '#6B7280' }}
+          >
             ⚠️ False claims are a violation of NITJ rules. Only submit if this item genuinely belongs to you.
           </div>
 
           {/* Error */}
           {error && (
-            <div className="rounded-2xl p-4 text-sm text-red-600 bg-red-50 border border-red-200">{error}</div>
+            <div className="rounded-2xl p-4 text-sm text-red-600 bg-red-50 border border-red-200">
+              {error}
+            </div>
           )}
 
           {/* Buttons */}
           <div className="flex gap-3">
-            <button type="button" onClick={() => navigate(`/item/${id}`)}
-              className="flex-1 border py-3 rounded-xl text-sm hover:opacity-70 transition-opacity"
-              style={{ borderColor: '#E8E2D8', color: '#6B7280' }}>
+            <button
+              type="button"
+              onClick={() => navigate(`/item/${id}`)}
+              className="flex-1 border py-3 rounded-xl text-sm hover:opacity-70 active:scale-95 transition-all"
+              style={{ borderColor: '#E8E2D8', color: '#6B7280' }}
+            >
               Cancel
             </button>
-            <button type="submit"
+            <button
+              type="submit"
               disabled={submitting || proof.trim().length < 20}
-              className="flex-1 text-white font-semibold py-3 rounded-xl hover:opacity-90 disabled:opacity-50 transition-opacity"
-              style={{ backgroundColor: '#1C3829' }}>
+              className="flex-1 text-white font-semibold py-3 rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all text-sm"
+              style={{ backgroundColor: '#1C3829' }}
+            >
               {submitting ? 'Submitting...' : 'Submit Claim →'}
             </button>
           </div>

@@ -40,23 +40,30 @@ export default function ReportLost() {
   }
 
   return (
-    <div className="min-h-screen flex items-start justify-center pt-10 px-4"
-      style={{ backgroundColor: '#F5F0E8' }}>
+    <div
+      className="min-h-screen flex items-start justify-center pt-6 sm:pt-10 px-4 pb-8"
+      style={{ backgroundColor: '#F5F0E8' }}
+    >
       <div className="w-full max-w-lg">
 
         {/* Back */}
-        <button onClick={() => navigate('/')}
-          className="text-sm mb-4 flex items-center gap-1 hover:underline"
-          style={{ color: '#6B7280' }}>
+        <button
+          onClick={() => navigate('/')}
+          className="text-sm mb-4 flex items-center gap-1 hover:underline active:opacity-70"
+          style={{ color: '#6B7280' }}
+        >
           ← Back to home
         </button>
 
-        <div className="bg-white rounded-2xl p-8"
-          style={{ border: '1px solid #E8E2D8', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-
-          <div className="mb-6">
-            <h1 className="text-xl font-bold"
-              style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+        <div
+          className="bg-white rounded-2xl p-5 sm:p-8"
+          style={{ border: '1px solid #E8E2D8', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+        >
+          <div className="mb-5 sm:mb-6">
+            <h1
+              className="text-lg sm:text-xl font-bold"
+              style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}
+            >
               Report Lost Item
             </h1>
             <p className="text-sm mt-1" style={{ color: '#6B7280' }}>
@@ -65,8 +72,10 @@ export default function ReportLost() {
           </div>
 
           {error && (
-            <div className="text-sm px-4 py-3 rounded-xl mb-4"
-              style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626' }}>
+            <div
+              className="text-sm px-4 py-3 rounded-xl mb-4"
+              style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626' }}
+            >
               {error}
             </div>
           )}
@@ -77,24 +86,42 @@ export default function ReportLost() {
               <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
                 Item Title <span style={{ color: '#DC2626' }}>*</span>
               </label>
-              <input name="title" type="text" placeholder="e.g. Blue JBL earphones"
-                value={form.title} onChange={handleChange} required
-                className={INPUT} style={INPUT_STYLE} />
+              <input
+                name="title"
+                type="text"
+                placeholder="e.g. Blue JBL earphones"
+                value={form.title}
+                onChange={handleChange}
+                required
+                className={INPUT}
+                style={INPUT_STYLE}
+              />
             </div>
 
             <div>
               <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
                 Category <span style={{ color: '#DC2626' }}>*</span>
               </label>
-              <select name="category" value={form.category} onChange={handleChange}
-                className={INPUT} style={INPUT_STYLE}>
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                className={INPUT}
+                style={INPUT_STYLE}
+              >
                 <option value="">Select a category</option>
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
               {form.category === 'Other' && (
-                <input name="category_other" type="text" placeholder="Describe the item type…"
-                  value={form.category_other} onChange={handleChange}
-                  className={`${INPUT} mt-2`} style={INPUT_STYLE} />
+                <input
+                  name="category_other"
+                  type="text"
+                  placeholder="Describe the item type…"
+                  value={form.category_other}
+                  onChange={handleChange}
+                  className={`${INPUT} mt-2`}
+                  style={INPUT_STYLE}
+                />
               )}
             </div>
 
@@ -102,15 +129,26 @@ export default function ReportLost() {
               <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
                 Where did you last have it? <span style={{ color: '#DC2626' }}>*</span>
               </label>
-              <select name="location" value={form.location} onChange={handleChange}
-                className={INPUT} style={INPUT_STYLE}>
+              <select
+                name="location"
+                value={form.location}
+                onChange={handleChange}
+                className={INPUT}
+                style={INPUT_STYLE}
+              >
                 <option value="">Select a location</option>
                 {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
               </select>
               {form.location === 'Other' && (
-                <input name="location_other" type="text" placeholder="Describe the location…"
-                  value={form.location_other} onChange={handleChange}
-                  className={`${INPUT} mt-2`} style={INPUT_STYLE} />
+                <input
+                  name="location_other"
+                  type="text"
+                  placeholder="Describe the location…"
+                  value={form.location_other}
+                  onChange={handleChange}
+                  className={`${INPUT} mt-2`}
+                  style={INPUT_STYLE}
+                />
               )}
             </div>
 
@@ -119,21 +157,32 @@ export default function ReportLost() {
                 Description{' '}
                 <span className="text-sm font-normal" style={{ color: '#9CA3AF' }}>(optional)</span>
               </label>
-              <textarea name="description"
+              <textarea
+                name="description"
                 placeholder="Colour, brand, any identifying features…"
-                value={form.description} onChange={handleChange} rows={3}
-                className={`${INPUT} resize-none`} style={INPUT_STYLE} />
+                value={form.description}
+                onChange={handleChange}
+                rows={3}
+                className={`${INPUT} resize-none`}
+                style={INPUT_STYLE}
+              />
             </div>
 
             <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => navigate('/')}
-                className="flex-1 py-2.5 rounded-xl text-sm transition-colors hover:opacity-80"
-                style={{ border: '1px solid #E8E2D8', color: '#6B7280', backgroundColor: '#FFFFFF' }}>
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className="flex-1 py-2.5 rounded-xl text-sm transition-all hover:opacity-80 active:scale-95"
+                style={{ border: '1px solid #E8E2D8', color: '#6B7280', backgroundColor: '#FFFFFF' }}
+              >
                 Cancel
               </button>
-              <button type="submit" disabled={loading}
-                className="flex-1 text-white py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
-                style={{ backgroundColor: '#1C3829' }}>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 text-white py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+                style={{ backgroundColor: '#1C3829' }}
+              >
                 {loading ? 'Submitting…' : 'Submit Report'}
               </button>
             </div>

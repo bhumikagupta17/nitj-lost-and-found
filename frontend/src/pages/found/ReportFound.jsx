@@ -71,31 +71,35 @@ export default function ReportFound() {
     <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
 
       {/* Header */}
-      <div className="bg-white border-b px-6 py-5" style={{ borderColor: '#E8E2D8' }}>
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
+      <div className="bg-white border-b" style={{ borderColor: '#E8E2D8' }}>
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold"
-              style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+            <h1
+              className="text-lg sm:text-xl font-bold leading-snug"
+              style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}
+            >
               Report a Found Item
             </h1>
-            <p className="text-sm mt-0.5" style={{ color: '#6B7280' }}>
-              Found something on campus? Post it here so the owner can claim it.
+            <p className="text-xs sm:text-sm mt-0.5" style={{ color: '#6B7280' }}>
+              Found something on campus? Post it so the owner can claim it.
             </p>
           </div>
-          <button onClick={() => navigate('/')}
-            className="text-sm border px-3 py-1.5 rounded-xl hover:opacity-70 transition-opacity"
-            style={{ borderColor: '#E8E2D8', color: '#6B7280' }}>
+          <button
+            onClick={() => navigate('/')}
+            className="shrink-0 text-sm border px-3 py-1.5 rounded-xl hover:opacity-70 active:scale-95 transition-all"
+            style={{ borderColor: '#E8E2D8', color: '#6B7280' }}
+          >
             ← Back
           </button>
         </div>
       </div>
 
       {/* Form */}
-      <div className="max-w-2xl mx-auto px-6 py-8">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-5 sm:py-8">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
 
           {/* Photo upload */}
-          <div className="bg-white rounded-2xl p-5" style={{ border: '1px solid #E8E2D8' }}>
+          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #E8E2D8' }}>
             <label className="block text-sm font-semibold mb-1" style={{ color: '#1C2B1E' }}>
               📷 Photo <span style={{ color: '#DC2626' }}>*</span>
             </label>
@@ -104,22 +108,30 @@ export default function ReportFound() {
             </p>
             {preview ? (
               <div className="relative">
-                <img src={preview} alt="Preview"
-                  className="w-full max-h-56 object-cover rounded-xl"
-                  style={{ border: '1px solid #E8E2D8' }} />
-                <button type="button" onClick={removePhoto}
-                  className="absolute top-2 right-2 bg-white rounded-full w-7 h-7 flex items-center justify-center shadow text-xs font-bold hover:opacity-70"
-                  style={{ border: '1px solid #E8E2D8', color: '#6B7280' }}>
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="w-full max-h-52 sm:max-h-56 object-cover rounded-xl"
+                  style={{ border: '1px solid #E8E2D8' }}
+                />
+                <button
+                  type="button"
+                  onClick={removePhoto}
+                  className="absolute top-2 right-2 bg-white rounded-full w-7 h-7 flex items-center justify-center shadow text-xs font-bold hover:opacity-70 active:scale-95 transition-all"
+                  style={{ border: '1px solid #E8E2D8', color: '#6B7280' }}
+                >
                   ✕
                 </button>
               </div>
             ) : (
-              <label className="flex flex-col items-center justify-center border-2 border-dashed rounded-xl py-10 cursor-pointer transition-colors"
+              <label
+                className="flex flex-col items-center justify-center border-2 border-dashed rounded-xl py-8 sm:py-10 cursor-pointer transition-colors"
                 style={{ borderColor: '#D1C9BB', backgroundColor: '#FDFCFA' }}
                 onMouseEnter={e => e.currentTarget.style.borderColor = '#2D6A4F'}
-                onMouseLeave={e => e.currentTarget.style.borderColor = '#D1C9BB'}>
+                onMouseLeave={e => e.currentTarget.style.borderColor = '#D1C9BB'}
+              >
                 <span className="text-3xl mb-2">📸</span>
-                <span className="text-sm" style={{ color: '#6B7280' }}>Click to upload a photo</span>
+                <span className="text-sm" style={{ color: '#6B7280' }}>Tap to upload a photo</span>
                 <span className="text-xs mt-1" style={{ color: '#9CA3AF' }}>JPG, PNG, WEBP — max 5 MB</span>
                 <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
               </label>
@@ -127,60 +139,94 @@ export default function ReportFound() {
           </div>
 
           {/* Item title */}
-          <div className="bg-white rounded-2xl p-5" style={{ border: '1px solid #E8E2D8' }}>
+          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #E8E2D8' }}>
             <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
               Item Title <span style={{ color: '#DC2626' }}>*</span>
             </label>
-            <input type="text" name="title" value={form.title} onChange={handleChange}
+            <input
+              type="text"
+              name="title"
+              value={form.title}
+              onChange={handleChange}
               placeholder="e.g. Blue water bottle, Black wallet, iPhone 14"
-              className={INPUT} style={INPUT_STYLE} />
+              className={INPUT}
+              style={INPUT_STYLE}
+            />
           </div>
 
           {/* Category */}
-          <div className="bg-white rounded-2xl p-5" style={{ border: '1px solid #E8E2D8' }}>
+          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #E8E2D8' }}>
             <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
               Category <span style={{ color: '#DC2626' }}>*</span>
             </label>
-            <select name="category" value={form.category} onChange={handleChange}
-              className={INPUT} style={INPUT_STYLE}>
+            <select
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              className={INPUT}
+              style={INPUT_STYLE}
+            >
               <option value="">Select a category</option>
               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
             {form.category === 'Other' && (
-              <input type="text" name="customCategory" value={form.customCategory}
-                onChange={handleChange} placeholder="Describe the category"
-                className={`${INPUT} mt-2`} style={INPUT_STYLE} />
+              <input
+                type="text"
+                name="customCategory"
+                value={form.customCategory}
+                onChange={handleChange}
+                placeholder="Describe the category"
+                className={`${INPUT} mt-2`}
+                style={INPUT_STYLE}
+              />
             )}
           </div>
 
           {/* Location */}
-          <div className="bg-white rounded-2xl p-5" style={{ border: '1px solid #E8E2D8' }}>
+          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #E8E2D8' }}>
             <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
               Where did you find it? <span style={{ color: '#DC2626' }}>*</span>
             </label>
-            <select name="location" value={form.location} onChange={handleChange}
-              className={INPUT} style={INPUT_STYLE}>
+            <select
+              name="location"
+              value={form.location}
+              onChange={handleChange}
+              className={INPUT}
+              style={INPUT_STYLE}
+            >
               <option value="">Select a location</option>
               {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
             {form.location === 'Other' && (
-              <input type="text" name="customLocation" value={form.customLocation}
-                onChange={handleChange} placeholder="Describe the location"
-                className={`${INPUT} mt-2`} style={INPUT_STYLE} />
+              <input
+                type="text"
+                name="customLocation"
+                value={form.customLocation}
+                onChange={handleChange}
+                placeholder="Describe the location"
+                className={`${INPUT} mt-2`}
+                style={INPUT_STYLE}
+              />
             )}
           </div>
 
           {/* Description */}
-          <div className="bg-white rounded-2xl p-5" style={{ border: '1px solid #E8E2D8' }}>
+          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #E8E2D8' }}>
             <label className="block text-sm font-semibold mb-1" style={{ color: '#1C2B1E' }}>
               Description <span style={{ color: '#DC2626' }}>*</span>
             </label>
             <p className="text-xs mb-2" style={{ color: '#9CA3AF' }}>
-              Describe what you see — but don't mention unique identifying details. Leave those for the claimer to prove.
+              Describe what you see — don't mention unique details. Leave those for the claimer to prove.
             </p>
-            <textarea name="description" value={form.description} onChange={handleChange}
-              rows={4} placeholder="e.g. Found near the library entrance. Black backpack with multiple pockets."
-              className={`${INPUT} resize-none`} style={INPUT_STYLE} />
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              rows={4}
+              placeholder="e.g. Found near the library entrance. Black backpack with multiple pockets."
+              className={`${INPUT} resize-none`}
+              style={INPUT_STYLE}
+            />
           </div>
 
           {/* Info box */}
@@ -202,16 +248,21 @@ export default function ReportFound() {
 
           {/* Error */}
           {error && (
-            <div className="rounded-2xl p-4 text-sm"
-              style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626' }}>
+            <div
+              className="rounded-2xl p-4 text-sm"
+              style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626' }}
+            >
               {error}
             </div>
           )}
 
           {/* Submit */}
-          <button type="submit" disabled={loading}
-            className="w-full text-white font-semibold py-3 rounded-xl hover:opacity-90 disabled:opacity-50 transition-opacity"
-            style={{ backgroundColor: '#1C3829' }}>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full text-white font-semibold py-3 rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all text-sm sm:text-base"
+            style={{ backgroundColor: '#1C3829' }}
+          >
             {loading ? 'Uploading & posting…' : 'Post Found Item →'}
           </button>
 

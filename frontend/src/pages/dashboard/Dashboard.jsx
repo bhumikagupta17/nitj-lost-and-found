@@ -21,24 +21,18 @@ export default function Dashboard() {
   async function fetchData() {
     setLoading(true)
 
-    // 1. My lost reports
     const { data: lostData } = await supabase
       .from('lost_items')
       .select('*')
       .eq('reported_by', user.id)
       .order('created_at', { ascending: false })
 
-    // 2. My found item posts
     const { data: foundData } = await supabase
       .from('found_items')
       .select('*')
       .eq('reported_by', user.id)
       .order('created_at', { ascending: false })
 
-    // 3. Incoming claims — three-step to avoid PostgREST join-filter bug + users() join error
-    //    Step A: IDs already in foundData
-    //    Step B: fetch claims — NO users() join (that caused data: null)
-    //    Step C: fetch claimer profiles separately and merge client-side
     let incomingData = []
     if (foundData?.length) {
       const myItemIds = foundData.map(i => i.id)
@@ -70,7 +64,6 @@ export default function Dashboard() {
       }
     }
 
-    // 4. Claims I submitted (as claimer)
     const { data: myClaimsData } = await supabase
       .from('claims')
       .select('*, found_items(title, location, category)')
@@ -116,7 +109,7 @@ export default function Dashboard() {
     }
     const s = map[status] || map.pending
     return (
-      <span className="text-xs px-2.5 py-0.5 rounded-full font-medium"
+      <span className="text-xs px-2.5 py-0.5 rounded-full font-medium shrink-0"
         style={{ backgroundColor: s.bg, color: s.color }}>
         {s.label}
       </span>
@@ -133,7 +126,7 @@ export default function Dashboard() {
     }
     const s = map[status] || map.active
     return (
-      <span className="text-xs px-2.5 py-0.5 rounded-full font-medium"
+      <span className="text-xs px-2.5 py-0.5 rounded-full font-medium shrink-0"
         style={{ backgroundColor: s.bg, color: s.color }}>
         {s.label}
       </span>
@@ -154,10 +147,10 @@ export default function Dashboard() {
     <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
 
       {/* Header */}
-      <div className="bg-white border-b px-6 py-5" style={{ borderColor: '#E8E2D8' }}>
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+      <div className="bg-white border-b" style={{ borderColor: '#E8E2D8' }}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-xl font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+            <h1 className="text-lg sm:text-xl font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
               My Dashboard
             </h1>
             <p className="text-sm mt-0.5" style={{ color: '#9CA3AF' }}>
@@ -165,25 +158,29 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => navigate('/')}
-              className="border text-sm px-4 py-2 rounded-xl hover:opacity-70 transition-opacity"
-              style={{ borderColor: '#E8E2D8', color: '#6B7280' }}>
+            <button
+              onClick={() => navigate('/')}
+              className="border text-sm px-3 sm:px-4 py-2 rounded-xl hover:opacity-70 active:scale-95 transition-all"
+              style={{ borderColor: '#E8E2D8', color: '#6B7280' }}
+            >
               ← Home
             </button>
-            <button onClick={() => navigate('/report-lost')}
-              className="text-white text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity font-medium"
-              style={{ backgroundColor: '#1C3829' }}>
+            <button
+              onClick={() => navigate('/report-lost')}
+              className="text-white text-sm px-3 sm:px-4 py-2 rounded-xl hover:opacity-90 active:scale-95 transition-all font-medium"
+              style={{ backgroundColor: '#1C3829' }}
+            >
               + Report Lost
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-8 space-y-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-5 sm:py-8 space-y-8 sm:space-y-10">
 
         {/* ══ SECTION 1: Incoming Claims ══ */}
         <section>
-          <h2 className="text-base font-semibold mb-4" style={{ color: '#1C2B1E' }}>
+          <h2 className="text-base font-semibold mb-3 sm:mb-4" style={{ color: '#1C2B1E' }}>
             📬 Incoming Claims
             {pendingIncoming.length > 0 && (
               <span className="ml-2 text-white text-xs px-2 py-0.5 rounded-full"
@@ -194,24 +191,26 @@ export default function Dashboard() {
           </h2>
 
           {incomingClaims.length === 0 ? (
-            <div className="rounded-2xl p-8 text-center border border-dashed"
+            <div className="rounded-2xl p-6 sm:p-8 text-center border border-dashed"
               style={{ backgroundColor: '#FFFFFF', borderColor: '#D1C9BB' }}>
               <p className="text-3xl mb-2">📭</p>
               <p className="text-sm" style={{ color: '#6B7280' }}>No one has claimed your found items yet.</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {incomingClaims.map(claim => (
-                <div key={claim.id} className="bg-white rounded-2xl p-5"
+                <div
+                  key={claim.id}
+                  className="bg-white rounded-2xl p-4 sm:p-5"
                   style={{
                     border: claim.status === 'pending' ? '1px solid #B7DFC9' : '1px solid #E8E2D8',
                     boxShadow: claim.status === 'pending' ? '0 1px 4px rgba(45,106,79,0.08)' : 'none',
-                  }}>
-
+                  }}
+                >
                   <div className="flex items-start justify-between gap-3 mb-3">
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <p className="text-xs mb-0.5" style={{ color: '#9CA3AF' }}>Claim on</p>
-                      <p className="text-sm font-semibold" style={{ color: '#1C2B1E' }}>
+                      <p className="text-sm font-semibold truncate" style={{ color: '#1C2B1E' }}>
                         {claim.found_items?.title}
                       </p>
                       <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
@@ -239,23 +238,36 @@ export default function Dashboard() {
 
                   {claim.status === 'pending' && (
                     <div className="flex gap-2">
-                      <button onClick={() => acceptClaim(claim)} disabled={actionLoading === claim.id}
-                        className="flex-1 text-white text-sm py-2.5 rounded-xl hover:opacity-90 disabled:opacity-50 font-medium"
-                        style={{ backgroundColor: '#2D6A4F' }}>
-                        {actionLoading === claim.id ? '...' : '✅ Accept — sounds right'}
+                      <button
+                        onClick={() => acceptClaim(claim)}
+                        disabled={actionLoading === claim.id}
+                        className="flex-1 text-white text-sm py-2.5 rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all font-medium"
+                        style={{ backgroundColor: '#2D6A4F' }}
+                      >
+                        {actionLoading === claim.id ? '...' : (
+                          <>
+                            <span className="hidden sm:inline">✅ Accept — sounds right</span>
+                            <span className="sm:hidden">✅ Accept</span>
+                          </>
+                        )}
                       </button>
-                      <button onClick={() => rejectClaim(claim.id)} disabled={actionLoading === claim.id}
-                        className="flex-1 text-sm py-2.5 rounded-xl disabled:opacity-50 hover:opacity-80"
-                        style={{ border: '1px solid #FECACA', color: '#DC2626', backgroundColor: '#FEF2F2' }}>
+                      <button
+                        onClick={() => rejectClaim(claim.id)}
+                        disabled={actionLoading === claim.id}
+                        className="flex-1 text-sm py-2.5 rounded-xl active:scale-95 disabled:opacity-50 hover:opacity-80 transition-all"
+                        style={{ border: '1px solid #FECACA', color: '#DC2626', backgroundColor: '#FEF2F2' }}
+                      >
                         ❌ Reject
                       </button>
                     </div>
                   )}
 
                   {claim.status === 'accepted' && (
-                    <button onClick={() => {console.log('claim:', claim); navigate(`/chat/${claim.id}`)}}
-                      className="w-full text-white text-sm py-2.5 rounded-xl hover:opacity-90 font-medium"
-                      style={{ backgroundColor: '#1C3829' }}>
+                    <button
+                      onClick={() => navigate(`/chat/${claim.id}`)}
+                      className="w-full text-white text-sm py-2.5 rounded-xl hover:opacity-90 active:scale-95 transition-all font-medium"
+                      style={{ backgroundColor: '#1C3829' }}
+                    >
                       💬 Open Chat →
                     </button>
                   )}
@@ -267,42 +279,48 @@ export default function Dashboard() {
 
         {/* ══ SECTION 2: Items I Found & Posted ══ */}
         <section>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
             <h2 className="text-base font-semibold" style={{ color: '#1C2B1E' }}>
               📦 Items I Found &amp; Posted
               <span className="ml-2 text-sm font-normal" style={{ color: '#9CA3AF' }}>({foundItems.length})</span>
             </h2>
-            <button onClick={() => navigate('/report-found')}
-              className="text-sm hover:underline" style={{ color: '#2D6A4F' }}>
-              + Post found item
+            <button
+              onClick={() => navigate('/report-found')}
+              className="text-sm hover:underline active:opacity-70 shrink-0"
+              style={{ color: '#2D6A4F' }}
+            >
+              + Post found
             </button>
           </div>
 
           {foundItems.length === 0 ? (
-            <div className="rounded-2xl p-8 text-center border border-dashed"
+            <div className="rounded-2xl p-6 sm:p-8 text-center border border-dashed"
               style={{ backgroundColor: '#FFFFFF', borderColor: '#D1C9BB' }}>
               <p className="text-3xl mb-2">🔍</p>
               <p className="text-sm" style={{ color: '#6B7280' }}>You haven't posted any found items yet.</p>
               <button onClick={() => navigate('/report-found')}
-                className="mt-3 text-sm hover:underline" style={{ color: '#2D6A4F' }}>
+                className="mt-3 text-sm hover:underline active:opacity-70" style={{ color: '#2D6A4F' }}>
                 Post a found item →
               </button>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {foundItems.map(item => (
-                <div key={item.id} onClick={() => navigate(`/item/${item.id}`)}
-                  className="bg-white rounded-2xl border p-4 flex items-start justify-between gap-4 cursor-pointer hover:shadow-sm transition-all"
-                  style={{ borderColor: '#E8E2D8' }}>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs px-2.5 py-0.5 rounded-full"
+                <div
+                  key={item.id}
+                  onClick={() => navigate(`/item/${item.id}`)}
+                  className="bg-white rounded-2xl border p-4 flex items-start justify-between gap-3 cursor-pointer hover:shadow-sm active:scale-[0.99] transition-all"
+                  style={{ borderColor: '#E8E2D8' }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                      <span className="text-xs px-2.5 py-0.5 rounded-full shrink-0"
                         style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
                         {item.category}
                       </span>
                       {itemBadge(item.status)}
                     </div>
-                    <h3 className="font-semibold text-sm" style={{ color: '#1C2B1E' }}>{item.title}</h3>
+                    <h3 className="font-semibold text-sm truncate" style={{ color: '#1C2B1E' }}>{item.title}</h3>
                     {item.description && (
                       <p className="text-xs mt-0.5 line-clamp-1" style={{ color: '#9CA3AF' }}>{item.description}</p>
                     )}
@@ -319,36 +337,39 @@ export default function Dashboard() {
 
         {/* ══ SECTION 3: My Claims (as claimer) ══ */}
         <section>
-          <h2 className="text-base font-semibold mb-4" style={{ color: '#1C2B1E' }}>
+          <h2 className="text-base font-semibold mb-3 sm:mb-4" style={{ color: '#1C2B1E' }}>
             🙋 My Claims
             <span className="ml-2 text-sm font-normal" style={{ color: '#9CA3AF' }}>({myClaims.length})</span>
           </h2>
 
           {myClaims.length === 0 ? (
-            <div className="rounded-2xl p-8 text-center border border-dashed"
+            <div className="rounded-2xl p-6 sm:p-8 text-center border border-dashed"
               style={{ backgroundColor: '#FFFFFF', borderColor: '#D1C9BB' }}>
               <p className="text-3xl mb-2">📋</p>
               <p className="text-sm" style={{ color: '#6B7280' }}>You haven't claimed any found items yet.</p>
               <button onClick={() => navigate('/')}
-                className="mt-3 text-sm hover:underline" style={{ color: '#2D6A4F' }}>
+                className="mt-3 text-sm hover:underline active:opacity-70" style={{ color: '#2D6A4F' }}>
                 Browse found items →
               </button>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {myClaims.map(claim => (
-                <div key={claim.id} className="bg-white rounded-2xl border p-4"
-                  style={{ borderColor: '#E8E2D8' }}>
-                  <div className="flex items-start justify-between gap-4 mb-2">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs px-2.5 py-0.5 rounded-full"
+                <div
+                  key={claim.id}
+                  className="bg-white rounded-2xl border p-4"
+                  style={{ borderColor: '#E8E2D8' }}
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                        <span className="text-xs px-2.5 py-0.5 rounded-full shrink-0"
                           style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
                           {claim.found_items?.category}
                         </span>
                         {claimBadge(claim.status)}
                       </div>
-                      <h3 className="font-semibold text-sm" style={{ color: '#1C2B1E' }}>
+                      <h3 className="font-semibold text-sm truncate" style={{ color: '#1C2B1E' }}>
                         {claim.found_items?.title}
                       </h3>
                       <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
@@ -359,17 +380,21 @@ export default function Dashboard() {
                   </div>
 
                   {claim.status === 'accepted' && (
-                    <button onClick={() => navigate(`/chat/${claim.id}`)}
-                      className="w-full mt-2 text-white text-sm py-2.5 rounded-xl hover:opacity-90 font-medium"
-                      style={{ backgroundColor: '#1C3829' }}>
+                    <button
+                      onClick={() => navigate(`/chat/${claim.id}`)}
+                      className="w-full mt-1 text-white text-sm py-2.5 rounded-xl hover:opacity-90 active:scale-95 transition-all font-medium"
+                      style={{ backgroundColor: '#1C3829' }}
+                    >
                       💬 Open Chat →
                     </button>
                   )}
 
                   {claim.status === 'pending' && (
-                    <button onClick={() => navigate(`/item/${claim.found_item_id}`)}
-                      className="w-full mt-2 border text-sm py-2 rounded-xl hover:opacity-70 transition-opacity"
-                      style={{ borderColor: '#E8E2D8', color: '#6B7280' }}>
+                    <button
+                      onClick={() => navigate(`/item/${claim.found_item_id}`)}
+                      className="w-full mt-1 border text-sm py-2 rounded-xl hover:opacity-70 active:scale-95 transition-all"
+                      style={{ borderColor: '#E8E2D8', color: '#6B7280' }}
+                    >
                       View item →
                     </button>
                   )}
@@ -381,35 +406,38 @@ export default function Dashboard() {
 
         {/* ══ SECTION 4: My Lost Reports ══ */}
         <section>
-          <h2 className="text-base font-semibold mb-4" style={{ color: '#1C2B1E' }}>
+          <h2 className="text-base font-semibold mb-3 sm:mb-4" style={{ color: '#1C2B1E' }}>
             🔍 My Lost Reports
             <span className="ml-2 text-sm font-normal" style={{ color: '#9CA3AF' }}>({lostItems.length})</span>
           </h2>
 
           {lostItems.length === 0 ? (
-            <div className="rounded-2xl p-8 text-center border border-dashed"
+            <div className="rounded-2xl p-6 sm:p-8 text-center border border-dashed"
               style={{ backgroundColor: '#FFFFFF', borderColor: '#D1C9BB' }}>
               <p className="text-3xl mb-2">📋</p>
               <p className="text-sm" style={{ color: '#6B7280' }}>You haven't reported any lost items yet.</p>
               <button onClick={() => navigate('/report-lost')}
-                className="mt-3 text-sm hover:underline" style={{ color: '#2D6A4F' }}>
+                className="mt-3 text-sm hover:underline active:opacity-70" style={{ color: '#2D6A4F' }}>
                 Report something lost →
               </button>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {lostItems.map(item => (
-                <div key={item.id} className="bg-white rounded-2xl border p-4 flex items-start justify-between gap-4"
-                  style={{ borderColor: '#E8E2D8' }}>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs px-2.5 py-0.5 rounded-full"
+                <div
+                  key={item.id}
+                  className="bg-white rounded-2xl border p-4 flex items-start justify-between gap-3"
+                  style={{ borderColor: '#E8E2D8' }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                      <span className="text-xs px-2.5 py-0.5 rounded-full shrink-0"
                         style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
                         {item.category}
                       </span>
                       {itemBadge(item.status)}
                     </div>
-                    <h3 className="font-semibold text-sm" style={{ color: '#1C2B1E' }}>{item.title}</h3>
+                    <h3 className="font-semibold text-sm truncate" style={{ color: '#1C2B1E' }}>{item.title}</h3>
                     {item.description && (
                       <p className="text-xs mt-0.5 line-clamp-1" style={{ color: '#9CA3AF' }}>{item.description}</p>
                     )}

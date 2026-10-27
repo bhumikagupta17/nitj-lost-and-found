@@ -19,8 +19,8 @@ export default function ChatWindow() {
 
   const bottomRef = useRef(null)
 
-  useEffect(() => { 
-    if (user) fetchAll() 
+  useEffect(() => {
+    if (user) fetchAll()
   }, [claimId, user])
 
   useEffect(() => {
@@ -43,7 +43,6 @@ export default function ChatWindow() {
   async function fetchAll() {
     setLoading(true)
 
-    // No users() join — that causes data: null (same bug as Dashboard)
     const { data: claimData, error: claimErr } = await supabase
       .from('claims')
       .select('*, found_items(*)')
@@ -67,7 +66,6 @@ export default function ChatWindow() {
     setClaim(claimData)
     setItem(foundItem)
 
-    // No users() join on messages either
     const { data: msgData } = await supabase
       .from('messages')
       .select('*')
@@ -123,11 +121,16 @@ export default function ChatWindow() {
   if (error && !claim) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F0E8' }}>
-        <div className="text-center">
+        <div className="text-center px-6">
           <p className="text-2xl mb-2">😕</p>
           <p className="text-sm" style={{ color: '#6B7280' }}>{error}</p>
-          <button onClick={() => navigate('/')} className="mt-4 text-sm hover:underline"
-            style={{ color: '#1C3829' }}>← Home</button>
+          <button
+            onClick={() => navigate('/')}
+            className="mt-4 text-sm hover:underline active:opacity-70"
+            style={{ color: '#1C3829' }}
+          >
+            ← Home
+          </button>
         </div>
       </div>
     )
@@ -142,36 +145,57 @@ export default function ChatWindow() {
 
       {/* Header */}
       <div className="bg-white border-b px-4 py-3 sticky top-0 z-10" style={{ borderColor: '#E8E2D8' }}>
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button onClick={() => navigate('/dashboard')}
-              className="text-lg hover:opacity-70" style={{ color: '#9CA3AF' }}>←</button>
-            <div>
-              <p className="text-sm font-semibold leading-tight" style={{ color: '#1C2B1E' }}>{item?.title}</p>
-              <p className="text-xs" style={{ color: '#9CA3AF' }}>
+        <div className="max-w-2xl mx-auto flex items-center justify-between gap-3">
+          {/* Left: back + item title */}
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="text-lg shrink-0 hover:opacity-70 active:opacity-50"
+              style={{ color: '#9CA3AF' }}
+            >
+              ←
+            </button>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold leading-tight truncate" style={{ color: '#1C2B1E' }}>
+                {item?.title}
+              </p>
+              <p className="text-xs truncate" style={{ color: '#9CA3AF' }}>
                 {isFinder ? '📬 Arranging handover with claimer' : '📦 Arranging handover with finder'}
               </p>
             </div>
           </div>
-          <button onClick={handleHandover} disabled={closing}
-            className="text-xs text-white px-3 py-1.5 rounded-xl hover:opacity-90 disabled:opacity-50"
-            style={{ backgroundColor: '#2D6A4F' }}>
-            {closing ? '...' : '✅ Handed Over'}
+          {/* Right: handed over button */}
+          <button
+            onClick={handleHandover}
+            disabled={closing}
+            className="shrink-0 text-xs text-white px-2.5 sm:px-3 py-1.5 rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all"
+            style={{ backgroundColor: '#2D6A4F' }}
+          >
+            {closing ? '...' : (
+              <>
+                <span className="hidden sm:inline">✅ Handed Over</span>
+                <span className="sm:hidden">✅ Done</span>
+              </>
+            )}
           </button>
         </div>
       </div>
 
       {/* Item info bar */}
       <div className="border-b px-4 py-2" style={{ backgroundColor: '#EEF9F4', borderColor: '#B7DFC9' }}>
-        <div className="max-w-2xl mx-auto flex items-center justify-between text-xs" style={{ color: '#2D6A4F' }}>
-          <span>📍 {item?.location} · {item?.category}</span>
-          <button onClick={() => navigate(`/item/${item?.id}`)}
-            className="underline hover:opacity-70">View item →</button>
+        <div className="max-w-2xl mx-auto flex items-center justify-between gap-2 text-xs flex-wrap" style={{ color: '#2D6A4F' }}>
+          <span className="truncate">📍 {item?.location} · {item?.category}</span>
+          <button
+            onClick={() => navigate(`/item/${item?.id}`)}
+            className="underline hover:opacity-70 active:opacity-50 shrink-0"
+          >
+            View item →
+          </button>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-4">
         <div className="max-w-2xl mx-auto space-y-4">
 
           <div className="text-center">
@@ -193,15 +217,17 @@ export default function ChatWindow() {
                 const isMe = msg.sender_id === user?.id
                 return (
                   <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'} mb-2`}>
-                    <div className={`max-w-xs lg:max-w-md flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
+                    <div className={`max-w-[78%] sm:max-w-xs lg:max-w-md flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                       {!isMe && (
                         <span className="text-xs mb-1 px-1" style={{ color: '#9CA3AF' }}>{otherPersonLabel}</span>
                       )}
-                      <div className={`px-4 py-2.5 rounded-2xl text-sm ${isMe ? 'rounded-br-sm' : 'rounded-bl-sm'}`}
+                      <div
+                        className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl text-sm ${isMe ? 'rounded-br-sm' : 'rounded-bl-sm'}`}
                         style={isMe
                           ? { backgroundColor: '#1C3829', color: '#FFFFFF' }
                           : { backgroundColor: '#FFFFFF', color: '#1C2B1E', border: '1px solid #E8E2D8' }
-                        }>
+                        }
+                      >
                         {msg.content}
                       </div>
                       <span className="text-xs mt-1 px-1" style={{ color: '#C4BAB0' }}>
@@ -227,7 +253,7 @@ export default function ChatWindow() {
       </div>
 
       {/* Input */}
-      <div className="bg-white border-t px-4 py-3" style={{ borderColor: '#E8E2D8' }}>
+      <div className="bg-white border-t px-3 sm:px-4 py-3" style={{ borderColor: '#E8E2D8' }}>
         <div className="max-w-2xl mx-auto">
           {error && <p className="text-xs mb-2" style={{ color: '#DC2626' }}>{error}</p>}
           <form onSubmit={handleSend} className="flex gap-2 items-end">
@@ -237,14 +263,17 @@ export default function ChatWindow() {
               onKeyDown={e => {
                 if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(e) }
               }}
-              placeholder="Type a message… (Enter to send)"
+              placeholder="Type a message…"
               rows={1}
-              className="flex-1 rounded-xl px-4 py-2.5 text-sm focus:outline-none resize-none"
+              className="flex-1 rounded-xl px-3 sm:px-4 py-2.5 text-sm focus:outline-none resize-none"
               style={{ border: '1px solid #E8E2D8', color: '#1C2B1E' }}
             />
-            <button type="submit" disabled={sending || !newMessage.trim()}
-              className="text-white px-4 py-2.5 rounded-xl hover:opacity-90 disabled:opacity-50 text-sm font-medium"
-              style={{ backgroundColor: '#1C3829' }}>
+            <button
+              type="submit"
+              disabled={sending || !newMessage.trim()}
+              className="shrink-0 text-white px-3 sm:px-4 py-2.5 rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all text-sm font-medium"
+              style={{ backgroundColor: '#1C3829' }}
+            >
               {sending ? '...' : 'Send'}
             </button>
           </form>

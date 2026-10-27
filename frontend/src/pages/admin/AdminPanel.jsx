@@ -32,7 +32,7 @@ export default function AdminPanel() {
         <div className="text-center">
           <p className="text-4xl mb-3">🚫</p>
           <p className="text-sm font-medium" style={{ color: '#374151' }}>Admin access only.</p>
-          <button onClick={() => navigate('/')} className="mt-4 text-sm hover:underline"
+          <button onClick={() => navigate('/')} className="mt-4 text-sm hover:underline active:scale-95 transition-all"
             style={{ color: '#1C3829' }}>← Back to home</button>
         </div>
       </div>
@@ -43,25 +43,25 @@ export default function AdminPanel() {
     <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
 
       {/* Header */}
-      <div className="bg-white border-b px-6 py-4" style={{ borderColor: '#E8E2D8' }}>
+      <div className="bg-white border-b px-4 sm:px-6 py-3 sm:py-4" style={{ borderColor: '#E8E2D8' }}>
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+            <h1 className="text-base sm:text-lg font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
               🛡️ Admin Panel
             </h1>
             <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>NITJ Lost &amp; Found — Admin Controls</p>
           </div>
-          <button onClick={() => navigate('/')} className="text-sm hover:opacity-70"
+          <button onClick={() => navigate('/')} className="text-sm hover:opacity-70 active:scale-95 transition-all"
             style={{ color: '#6B7280' }}>← Home</button>
         </div>
       </div>
 
       {/* Tab bar */}
-      <div className="bg-white border-b px-6" style={{ borderColor: '#E8E2D8' }}>
+      <div className="bg-white border-b px-4 sm:px-6" style={{ borderColor: '#E8E2D8' }}>
         <div className="max-w-6xl mx-auto flex gap-1 overflow-x-auto">
           {TABS.map(t => (
             <button key={t.key} onClick={() => setTab(t.key)}
-              className="px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors"
+              className="px-3 sm:px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors"
               style={{
                 borderBottomColor: tab === t.key ? '#1C3829' : 'transparent',
                 color: tab === t.key ? '#1C3829' : '#6B7280',
@@ -73,7 +73,7 @@ export default function AdminPanel() {
       </div>
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto px-6 py-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
         {tab === 'overview' && <OverviewTab />}
         {tab === 'items'    && <ItemsTab />}
         {tab === 'claims'   && <ClaimsTab />}
@@ -127,11 +127,11 @@ function OverviewTab() {
   return (
     <div>
       <h2 className="text-sm font-bold mb-4" style={{ color: '#374151' }}>Portal Statistics</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         {cards.map(c => (
-          <div key={c.label} className="rounded-2xl p-5 border" style={{ backgroundColor: c.bg, borderColor: '#E8E2D8' }}>
-            <p className="text-2xl mb-1">{c.icon}</p>
-            <p className="text-3xl font-bold" style={{ color: c.color }}>{c.value ?? '—'}</p>
+          <div key={c.label} className="rounded-2xl p-4 sm:p-5 border" style={{ backgroundColor: c.bg, borderColor: '#E8E2D8' }}>
+            <p className="text-xl sm:text-2xl mb-1">{c.icon}</p>
+            <p className="text-2xl sm:text-3xl font-bold" style={{ color: c.color }}>{c.value ?? '—'}</p>
             <p className="text-xs mt-1" style={{ color: '#6B7280' }}>{c.label}</p>
           </div>
         ))}
@@ -212,7 +212,7 @@ function ItemsTab() {
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-semibold" style={{ color: '#1C2B1E' }}>{item.title}</p>
+                    <p className="text-sm font-semibold truncate" style={{ color: '#1C2B1E' }}>{item.title}</p>
                     {statusChip(item.status)}
                   </div>
                   <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
@@ -227,13 +227,13 @@ function ItemsTab() {
                 <div className="flex flex-col gap-1.5 shrink-0">
                   {item.status !== 'closed' && (
                     <button onClick={() => forceClose(item.id)} disabled={actionLoading === item.id}
-                      className="text-xs px-3 py-1.5 rounded-xl disabled:opacity-50 hover:opacity-70"
+                      className="text-xs px-3 py-1.5 rounded-xl disabled:opacity-50 hover:opacity-70 active:scale-95 transition-all"
                       style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
                       {actionLoading === item.id ? '...' : 'Force Close'}
                     </button>
                   )}
                   <button onClick={() => deleteItem(item.id)} disabled={actionLoading === item.id}
-                    className="text-xs px-3 py-1.5 rounded-xl disabled:opacity-50 hover:opacity-70"
+                    className="text-xs px-3 py-1.5 rounded-xl disabled:opacity-50 hover:opacity-70 active:scale-95 transition-all"
                     style={{ backgroundColor: '#FEF2F2', color: '#DC2626' }}>
                     {actionLoading === item.id ? '...' : 'Delete'}
                   </button>
@@ -308,7 +308,7 @@ function ClaimsTab() {
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-semibold" style={{ color: '#1C2B1E' }}>
+                    <p className="text-sm font-semibold truncate" style={{ color: '#1C2B1E' }}>
                       {claim.found_items?.title || 'Unknown Item'}
                     </p>
                     {claimChip(claim.status)}
@@ -335,7 +335,7 @@ function ClaimsTab() {
                 <div className="shrink-0">
                   {claim.status === 'pending' && (
                     <button onClick={() => forceReject(claim.id)} disabled={actionLoading === claim.id}
-                      className="text-xs px-3 py-1.5 rounded-xl disabled:opacity-50 hover:opacity-70"
+                      className="text-xs px-3 py-1.5 rounded-xl disabled:opacity-50 hover:opacity-70 active:scale-95 transition-all"
                       style={{ backgroundColor: '#FEF2F2', color: '#DC2626' }}>
                       {actionLoading === claim.id ? '...' : 'Force Reject'}
                     </button>
@@ -398,11 +398,11 @@ function UsersTab() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4 gap-3">
-        <h2 className="text-sm font-bold" style={{ color: '#374151' }}>All Users ({users.length})</h2>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2 sm:gap-3">
+        <h2 className="text-sm font-bold shrink-0" style={{ color: '#374151' }}>All Users ({users.length})</h2>
         <input type="text" value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Search by name / email / dept..."
-          className="border border-[#E8E2D8] rounded-xl px-3 py-1.5 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-[#1C3829]" />
+          className="border border-[#E8E2D8] rounded-xl px-3 py-1.5 text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-[#1C3829]" />
       </div>
       {loading ? <Spinner /> : (
         <div className="space-y-2">
@@ -415,7 +415,7 @@ function UsersTab() {
                   <p className="text-sm font-semibold" style={{ color: '#1C2B1E' }}>{u.name || 'Unnamed'}</p>
                   {roleBadge(u.role)}
                 </div>
-                <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>{u.email}</p>
+                <p className="text-xs mt-0.5 truncate" style={{ color: '#9CA3AF' }}>{u.email}</p>
                 {u.department && (
                   <p className="text-xs" style={{ color: '#9CA3AF' }}>
                     {u.department}{u.roll_no ? ` · ${u.roll_no}` : ''}
@@ -424,7 +424,7 @@ function UsersTab() {
               </div>
               <select value={u.role} onChange={e => changeRole(u.id, e.target.value)}
                 disabled={actionLoading === u.id}
-                className="border border-[#E8E2D8] rounded-xl px-2 py-1.5 text-xs bg-white focus:outline-none disabled:opacity-50 shrink-0">
+                className="border border-[#E8E2D8] rounded-xl px-2 py-1.5 text-xs bg-white focus:outline-none disabled:opacity-50 shrink-0 active:scale-95 transition-all">
                 {['student','faculty','security','admin'].map(r => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
@@ -489,12 +489,12 @@ function GuardsTab() {
         when they sign up. After adding, also set their role in the Users tab if they've already signed up.
       </p>
 
-      <form onSubmit={addGuard} className="flex gap-2 mb-5">
+      <form onSubmit={addGuard} className="flex flex-col sm:flex-row gap-2 mb-5">
         <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)}
           placeholder="guard@nitj.ac.in" required
           className="flex-1 border border-[#E8E2D8] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1C3829]" />
         <button type="submit" disabled={addLoading}
-          className="text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-50"
+          className="shrink-0 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-50 active:scale-95 transition-all"
           style={{ backgroundColor: '#1C3829' }}>
           {addLoading ? '...' : '+ Add Guard'}
         </button>
@@ -507,16 +507,16 @@ function GuardsTab() {
         <div className="space-y-2">
           {guards.length === 0 && <p className="text-sm text-center py-8" style={{ color: '#9CA3AF' }}>No guards added yet.</p>}
           {guards.map(g => (
-            <div key={g.id} className="bg-white rounded-2xl border px-4 py-3 flex items-center justify-between"
+            <div key={g.id} className="bg-white rounded-2xl border px-4 py-3 flex items-center justify-between gap-3"
               style={{ borderColor: '#E8E2D8' }}>
-              <div>
-                <p className="text-sm font-medium" style={{ color: '#1C2B1E' }}>{g.email}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate" style={{ color: '#1C2B1E' }}>{g.email}</p>
                 <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
                   Added {new Date(g.created_at).toLocaleDateString('en-IN')}
                 </p>
               </div>
               <button onClick={() => removeGuard(g.id, g.email)}
-                className="text-xs hover:underline" style={{ color: '#DC2626' }}>
+                className="text-xs hover:underline active:scale-95 transition-all shrink-0" style={{ color: '#DC2626' }}>
                 Remove
               </button>
             </div>
