@@ -19,7 +19,9 @@ export default function ChatWindow() {
 
   const bottomRef = useRef(null)
 
-  useEffect(() => { fetchAll() }, [claimId])
+  useEffect(() => { 
+    if (user) fetchAll() 
+  }, [claimId, user])
 
   useEffect(() => {
     const channel = supabase
@@ -40,10 +42,20 @@ export default function ChatWindow() {
 
   async function fetchAll() {
     setLoading(true)
-    const { data: claimData, error: claimErr } = await supabase
-      .from('claims').select('*, found_items(*, users(name, department))').eq('id', claimId).single()
 
-    if (claimErr || !claimData) { setError('Chat not found.'); setLoading(false); return }
+    // No users() join — that causes data: null (same bug as Dashboard)
+    const { data: claimData, error: claimErr } = await supabase
+      .from('claims')
+      .select('*, found_items(*)')
+      .eq('id', claimId)
+      .single()
+
+    if (claimErr || !claimData) {
+      console.error('claim fetch error:', claimErr)
+      setError('Chat not found.')
+      setLoading(false)
+      return
+    }
 
     const foundItem = claimData.found_items
     const isFinder = foundItem?.reported_by === user?.id
@@ -55,9 +67,12 @@ export default function ChatWindow() {
     setClaim(claimData)
     setItem(foundItem)
 
+    // No users() join on messages either
     const { data: msgData } = await supabase
-      .from('messages').select('*, users(name)')
-      .eq('claim_id', claimId).order('created_at', { ascending: true })
+      .from('messages')
+      .select('*')
+      .eq('claim_id', claimId)
+      .order('created_at', { ascending: true })
 
     setMessages(msgData || [])
     setLoading(false)
@@ -214,7 +229,7 @@ export default function ChatWindow() {
       {/* Input */}
       <div className="bg-white border-t px-4 py-3" style={{ borderColor: '#E8E2D8' }}>
         <div className="max-w-2xl mx-auto">
-          {error && <p className="text-xs text-red-500 mb-2">{error}</p>}
+          {error && <p className="text-xs mb-2" style={{ color: '#DC2626' }}>{error}</p>}
           <form onSubmit={handleSend} className="flex gap-2 items-end">
             <textarea
               value={newMessage}
@@ -222,10 +237,10 @@ export default function ChatWindow() {
               onKeyDown={e => {
                 if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(e) }
               }}
-              placeholder="Type a message... (Enter to send)"
+              placeholder="Type a message… (Enter to send)"
               rows={1}
-              className="flex-1 border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 resize-none"
-              style={{ borderColor: '#E8E2D8', focusRingColor: '#1C3829' }}
+              className="flex-1 rounded-xl px-4 py-2.5 text-sm focus:outline-none resize-none"
+              style={{ border: '1px solid #E8E2D8', color: '#1C2B1E' }}
             />
             <button type="submit" disabled={sending || !newMessage.trim()}
               className="text-white px-4 py-2.5 rounded-xl hover:opacity-90 disabled:opacity-50 text-sm font-medium"
@@ -234,7 +249,7 @@ export default function ChatWindow() {
             </button>
           </form>
           <p className="text-xs mt-1.5 text-center" style={{ color: '#9CA3AF' }}>
-            Keep it respectful. No personal contact details needed — arrange handover on campus.
+            Keep it respectful. Arrange handover on campus.
           </p>
         </div>
       </div>

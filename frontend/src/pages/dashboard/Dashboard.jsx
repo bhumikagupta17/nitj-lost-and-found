@@ -253,7 +253,7 @@ export default function Dashboard() {
                   )}
 
                   {claim.status === 'accepted' && (
-                    <button onClick={() => navigate(`/chat/${claim.id}`)}
+                    <button onClick={() => {console.log('claim:', claim); navigate(`/chat/${claim.id}`)}}
                       className="w-full text-white text-sm py-2.5 rounded-xl hover:opacity-90 font-medium"
                       style={{ backgroundColor: '#1C3829' }}>
                       💬 Open Chat →
