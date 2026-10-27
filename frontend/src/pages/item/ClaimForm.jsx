@@ -47,6 +47,7 @@ export default function ClaimForm() {
       .from('claims').select('id')
       .eq('found_item_id', id).eq('claimant_id', user.id).maybeSingle()
 
+
     if (existing) {
       setError('You have already submitted a claim for this item.')
       setSubmitting(false)
@@ -56,7 +57,7 @@ export default function ClaimForm() {
     const { error: insertErr } = await supabase.from('claims').insert({
       found_item_id: id,
       claimant_id: user.id,
-      description_proof: proof.trim(),
+      proof_description: proof.trim(),
       status: 'pending',
     })
 

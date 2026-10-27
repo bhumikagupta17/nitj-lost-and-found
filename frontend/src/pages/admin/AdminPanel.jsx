@@ -320,14 +320,14 @@ function ClaimsTab() {
                     Claimer: <span className="font-medium">{claim.users?.name || 'Unknown'}</span>
                     {claim.users?.email ? ` · ${claim.users.email}` : ''}
                   </p>
-                  {claim.description_proof && (
+                  {claim.proof_description && (
                     <details className="mt-2">
                       <summary className="text-xs cursor-pointer hover:underline" style={{ color: '#1C3829' }}>
                         View description proof
                       </summary>
                       <p className="text-xs mt-1 p-2 rounded-xl leading-relaxed"
                         style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
-                        {claim.description_proof}
+                        {claim.proof_description}
                       </p>
                     </details>
                   )}

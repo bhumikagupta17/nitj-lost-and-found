@@ -8,11 +8,11 @@ export default function Dashboard() {
   const { user, profile, loading: authLoading } = useAuth()
 
   const [lostItems, setLostItems] = useState([])
-  const [myClaims, setMyClaims] = useState([])        // claims I submitted (as claimer)
-  const [foundItems, setFoundItems] = useState([])    // items I posted (as finder)
-  const [incomingClaims, setIncomingClaims] = useState([]) // claims on my found items
+  const [myClaims, setMyClaims] = useState([])
+  const [foundItems, setFoundItems] = useState([])
+  const [incomingClaims, setIncomingClaims] = useState([])
   const [loading, setLoading] = useState(true)
-  const [actionLoading, setActionLoading] = useState(null) // claimId being accepted/rejected
+  const [actionLoading, setActionLoading] = useState(null)
 
   useEffect(() => {
     if (!authLoading && user) fetchData()
@@ -35,12 +35,40 @@ export default function Dashboard() {
       .eq('reported_by', user.id)
       .order('created_at', { ascending: false })
 
-    // 3. Incoming claims on my found items (with claimer info)
-    const { data: incomingData } = await supabase
-      .from('claims')
-      .select('*, found_items!inner(title, location, reported_by), users(name, department, roll_no)')
-      .eq('found_items.reported_by', user.id)
-      .order('created_at', { ascending: false })
+    // 3. Incoming claims — three-step to avoid PostgREST join-filter bug + users() join error
+    //    Step A: IDs already in foundData
+    //    Step B: fetch claims — NO users() join (that caused data: null)
+    //    Step C: fetch claimer profiles separately and merge client-side
+    let incomingData = []
+    if (foundData?.length) {
+      const myItemIds = foundData.map(i => i.id)
+
+      const { data: claimsData, error: claimsError } = await supabase
+        .from('claims')
+        .select('*, found_items(title, location, category)')
+        .in('found_item_id', myItemIds)
+        .order('created_at', { ascending: false })
+
+      if (claimsError) {
+        console.error('claims fetch error:', claimsError)
+      } else if (claimsData?.length) {
+        const claimerIds = [...new Set(claimsData.map(c => c.claimant_id))]
+        const { data: claimerProfiles, error: profilesError } = await supabase
+          .from('users')
+          .select('id, name, department, roll_no')
+          .in('id', claimerIds)
+
+        if (profilesError) console.error('claimer profiles fetch error:', profilesError)
+
+        const profileMap = Object.fromEntries(
+          (claimerProfiles || []).map(p => [p.id, p])
+        )
+        incomingData = claimsData.map(c => ({
+          ...c,
+          users: profileMap[c.claimant_id] || null,
+        }))
+      }
+    }
 
     // 4. Claims I submitted (as claimer)
     const { data: myClaimsData } = await supabase
@@ -51,46 +79,24 @@ export default function Dashboard() {
 
     setLostItems(lostData || [])
     setFoundItems(foundData || [])
-    setIncomingClaims(incomingData || [])
+    setIncomingClaims(incomingData)
     setMyClaims(myClaimsData || [])
     setLoading(false)
   }
 
-  // ── Accept a claim ───────────────────────────────────────────────
   async function acceptClaim(claim) {
     setActionLoading(claim.id)
-
-    // Update claim status to accepted
-    await supabase
-      .from('claims')
-      .update({ status: 'accepted' })
-      .eq('id', claim.id)
-
-    // Update found_item status to claimed
-    await supabase
-      .from('found_items')
-      .update({ status: 'claimed' })
-      .eq('id', claim.found_item_id)
-
-    // Reject all other pending claims on this item
-    await supabase
-      .from('claims')
-      .update({ status: 'rejected' })
-      .eq('found_item_id', claim.found_item_id)
-      .eq('status', 'pending')
-      .neq('id', claim.id)
-
+    await supabase.from('claims').update({ status: 'accepted' }).eq('id', claim.id)
+    await supabase.from('found_items').update({ status: 'claimed' }).eq('id', claim.found_item_id)
+    await supabase.from('claims').update({ status: 'rejected' })
+      .eq('found_item_id', claim.found_item_id).eq('status', 'pending').neq('id', claim.id)
     setActionLoading(null)
     fetchData()
   }
 
-  // ── Reject a claim ───────────────────────────────────────────────
   async function rejectClaim(claimId) {
     setActionLoading(claimId)
-    await supabase
-      .from('claims')
-      .update({ status: 'rejected' })
-      .eq('id', claimId)
+    await supabase.from('claims').update({ status: 'rejected' }).eq('id', claimId)
     setActionLoading(null)
     fetchData()
   }
@@ -101,24 +107,34 @@ export default function Dashboard() {
     })
   }
 
-  function statusBadge(status, type = 'claim') {
-    const claimMap = {
-      pending:  { bg: 'bg-blue-100',   text: 'text-blue-700',   label: '⏳ Pending' },
-      accepted: { bg: 'bg-green-100',  text: 'text-green-700',  label: '✅ Accepted' },
-      rejected: { bg: 'bg-red-100',    text: 'text-red-600',    label: '❌ Rejected' },
-      closed:   { bg: 'bg-gray-100',   text: 'text-gray-500',   label: '✔ Closed' },
+  function claimBadge(status) {
+    const map = {
+      pending:  { bg: '#FFFBEB', color: '#D97706', label: '⏳ Pending' },
+      accepted: { bg: '#EEF9F4', color: '#2D6A4F', label: '✅ Accepted' },
+      rejected: { bg: '#FEF2F2', color: '#DC2626', label: '❌ Rejected' },
+      closed:   { bg: '#F3F4F6', color: '#6B7280', label: '✔ Closed' },
     }
-    const itemMap = {
-      active:    { bg: 'bg-green-100',  text: 'text-green-700',  label: '🟢 Active' },
-      claimed:   { bg: 'bg-yellow-100', text: 'text-yellow-700', label: '⏳ Claimed' },
-      accepted:  { bg: 'bg-blue-100',   text: 'text-blue-700',   label: '💬 In Chat' },
-      closed:    { bg: 'bg-gray-100',   text: 'text-gray-500',   label: '✔ Closed' },
-      escalated: { bg: 'bg-red-100',    text: 'text-red-600',    label: '🚨 Escalated' },
-    }
-    const map = type === 'item' ? itemMap : claimMap
-    const s = map[status] || map.active || map.pending
+    const s = map[status] || map.pending
     return (
-      <span className={`${s.bg} ${s.text} text-xs px-2 py-0.5 rounded-full font-medium`}>
+      <span className="text-xs px-2.5 py-0.5 rounded-full font-medium"
+        style={{ backgroundColor: s.bg, color: s.color }}>
+        {s.label}
+      </span>
+    )
+  }
+
+  function itemBadge(status) {
+    const map = {
+      active:    { bg: '#ECFDF5', color: '#059669', label: '🟢 Active' },
+      claimed:   { bg: '#FFFBEB', color: '#D97706', label: '⏳ Claimed' },
+      accepted:  { bg: '#EEF9F4', color: '#2D6A4F', label: '💬 In Chat' },
+      closed:    { bg: '#F3F4F6', color: '#6B7280', label: '✔ Closed' },
+      escalated: { bg: '#FEF2F2', color: '#DC2626', label: '🚨 Escalated' },
+    }
+    const s = map[status] || map.active
+    return (
+      <span className="text-xs px-2.5 py-0.5 rounded-full font-medium"
+        style={{ backgroundColor: s.bg, color: s.color }}>
         {s.label}
       </span>
     )
@@ -126,8 +142,8 @@ export default function Dashboard() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-400 text-sm">Loading your dashboard...</p>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F0E8' }}>
+        <p className="text-sm" style={{ color: '#9CA3AF' }}>Loading your dashboard...</p>
       </div>
     )
   }
@@ -135,28 +151,28 @@ export default function Dashboard() {
   const pendingIncoming = incomingClaims.filter(c => c.status === 'pending')
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-5">
+      <div className="bg-white border-b px-6 py-5" style={{ borderColor: '#E8E2D8' }}>
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-gray-800">My Dashboard</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-xl font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+              My Dashboard
+            </h1>
+            <p className="text-sm mt-0.5" style={{ color: '#9CA3AF' }}>
               {profile?.name ? `Welcome back, ${profile.name}` : 'Your activity'}
             </p>
           </div>
           <div className="flex gap-2">
-            <button
-              onClick={() => navigate('/')}
-              className="border border-gray-300 text-gray-600 text-sm px-4 py-2 rounded-lg hover:bg-gray-50"
-            >
+            <button onClick={() => navigate('/')}
+              className="border text-sm px-4 py-2 rounded-xl hover:opacity-70 transition-opacity"
+              style={{ borderColor: '#E8E2D8', color: '#6B7280' }}>
               ← Home
             </button>
-            <button
-              onClick={() => navigate('/report-lost')}
-              className="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700"
-            >
+            <button onClick={() => navigate('/report-lost')}
+              className="text-white text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity font-medium"
+              style={{ backgroundColor: '#1C3829' }}>
               + Report Lost
             </button>
           </div>
@@ -165,148 +181,135 @@ export default function Dashboard() {
 
       <div className="max-w-4xl mx-auto px-6 py-8 space-y-10">
 
-        {/* ══ SECTION 1: Incoming claims on my found items ══ */}
-        {foundItems.length > 0 && (
-          <section>
-            <h2 className="text-base font-semibold text-gray-800 mb-4">
-              📬 Incoming Claims
-              {pendingIncoming.length > 0 && (
-                <span className="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  {pendingIncoming.length} new
-                </span>
-              )}
-            </h2>
-
-            {incomingClaims.length === 0 ? (
-              <div className="bg-white border border-dashed border-gray-300 rounded-xl p-8 text-center">
-                <p className="text-3xl mb-2">📭</p>
-                <p className="text-gray-500 text-sm">No one has claimed your found items yet.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {incomingClaims.map(claim => (
-                  <div
-                    key={claim.id}
-                    className={`bg-white rounded-xl border p-5 ${
-                      claim.status === 'pending' ? 'border-blue-300 shadow-sm' : 'border-gray-200'
-                    }`}
-                  >
-                    {/* Claim header */}
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                      <div>
-                        <p className="text-xs text-gray-400 mb-0.5">Claim on</p>
-                        <p className="text-sm font-semibold text-gray-800">
-                          {claim.found_items?.title}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-0.5">
-                          by {claim.users?.name || 'a student'}
-                          {claim.users?.roll_no ? ` · ${claim.users.roll_no}` : ''}
-                          {claim.users?.department ? ` · ${claim.users.department}` : ''}
-                        </p>
-                      </div>
-                      <div className="text-right shrink-0">
-                        {statusBadge(claim.status, 'claim')}
-                        <p className="text-xs text-gray-400 mt-1">{formatDate(claim.created_at)}</p>
-                      </div>
-                    </div>
-
-                    {/* Ownership proof */}
-                    {claim.description_proof && (
-                      <div className="bg-gray-50 rounded-lg p-3 mb-3">
-                        <p className="text-xs text-gray-400 mb-1 font-medium uppercase tracking-wide">
-                          Their ownership description:
-                        </p>
-                        <p className="text-sm text-gray-700 leading-relaxed">
-                          "{claim.description_proof}"
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Action buttons */}
-                    {claim.status === 'pending' && (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => acceptClaim(claim)}
-                          disabled={actionLoading === claim.id}
-                          className="flex-1 bg-green-600 text-white text-sm py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium"
-                        >
-                          {actionLoading === claim.id ? '...' : '✅ Accept — sounds right'}
-                        </button>
-                        <button
-                          onClick={() => rejectClaim(claim.id)}
-                          disabled={actionLoading === claim.id}
-                          className="flex-1 border border-red-200 text-red-600 text-sm py-2 rounded-lg hover:bg-red-50 disabled:opacity-50"
-                        >
-                          ❌ Reject — doesn't match
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Accepted — go to chat */}
-                    {claim.status === 'accepted' && (
-                      <button
-                        onClick={() => navigate(`/chat/${claim.id}`)}
-                        className="w-full bg-blue-600 text-white text-sm py-2 rounded-lg hover:bg-blue-700 font-medium"
-                      >
-                        💬 Open Chat →
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
+        {/* ══ SECTION 1: Incoming Claims ══ */}
+        <section>
+          <h2 className="text-base font-semibold mb-4" style={{ color: '#1C2B1E' }}>
+            📬 Incoming Claims
+            {pendingIncoming.length > 0 && (
+              <span className="ml-2 text-white text-xs px-2 py-0.5 rounded-full"
+                style={{ backgroundColor: '#DC2626' }}>
+                {pendingIncoming.length} new
+              </span>
             )}
-          </section>
-        )}
+          </h2>
 
-        {/* ══ SECTION 2: My Found Item Posts ══ */}
+          {incomingClaims.length === 0 ? (
+            <div className="rounded-2xl p-8 text-center border border-dashed"
+              style={{ backgroundColor: '#FFFFFF', borderColor: '#D1C9BB' }}>
+              <p className="text-3xl mb-2">📭</p>
+              <p className="text-sm" style={{ color: '#6B7280' }}>No one has claimed your found items yet.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {incomingClaims.map(claim => (
+                <div key={claim.id} className="bg-white rounded-2xl p-5"
+                  style={{
+                    border: claim.status === 'pending' ? '1px solid #B7DFC9' : '1px solid #E8E2D8',
+                    boxShadow: claim.status === 'pending' ? '0 1px 4px rgba(45,106,79,0.08)' : 'none',
+                  }}>
+
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div>
+                      <p className="text-xs mb-0.5" style={{ color: '#9CA3AF' }}>Claim on</p>
+                      <p className="text-sm font-semibold" style={{ color: '#1C2B1E' }}>
+                        {claim.found_items?.title}
+                      </p>
+                      <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
+                        by {claim.users?.name || 'a student'}
+                        {claim.users?.roll_no ? ` · ${claim.users.roll_no}` : ''}
+                        {claim.users?.department ? ` · ${claim.users.department}` : ''}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      {claimBadge(claim.status)}
+                      <p className="text-xs mt-1" style={{ color: '#9CA3AF' }}>{formatDate(claim.created_at)}</p>
+                    </div>
+                  </div>
+
+                  {claim.proof_description && (
+                    <div className="rounded-xl p-3 mb-3" style={{ backgroundColor: '#F5F0E8' }}>
+                      <p className="text-xs font-medium uppercase tracking-wide mb-1" style={{ color: '#9CA3AF' }}>
+                        Their ownership description:
+                      </p>
+                      <p className="text-sm leading-relaxed" style={{ color: '#374151' }}>
+                        "{claim.proof_description}"
+                      </p>
+                    </div>
+                  )}
+
+                  {claim.status === 'pending' && (
+                    <div className="flex gap-2">
+                      <button onClick={() => acceptClaim(claim)} disabled={actionLoading === claim.id}
+                        className="flex-1 text-white text-sm py-2.5 rounded-xl hover:opacity-90 disabled:opacity-50 font-medium"
+                        style={{ backgroundColor: '#2D6A4F' }}>
+                        {actionLoading === claim.id ? '...' : '✅ Accept — sounds right'}
+                      </button>
+                      <button onClick={() => rejectClaim(claim.id)} disabled={actionLoading === claim.id}
+                        className="flex-1 text-sm py-2.5 rounded-xl disabled:opacity-50 hover:opacity-80"
+                        style={{ border: '1px solid #FECACA', color: '#DC2626', backgroundColor: '#FEF2F2' }}>
+                        ❌ Reject
+                      </button>
+                    </div>
+                  )}
+
+                  {claim.status === 'accepted' && (
+                    <button onClick={() => navigate(`/chat/${claim.id}`)}
+                      className="w-full text-white text-sm py-2.5 rounded-xl hover:opacity-90 font-medium"
+                      style={{ backgroundColor: '#1C3829' }}>
+                      💬 Open Chat →
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* ══ SECTION 2: Items I Found & Posted ══ */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold text-gray-800">
-              📦 Items I Found & Posted
-              <span className="ml-2 text-sm font-normal text-gray-400">({foundItems.length})</span>
+            <h2 className="text-base font-semibold" style={{ color: '#1C2B1E' }}>
+              📦 Items I Found &amp; Posted
+              <span className="ml-2 text-sm font-normal" style={{ color: '#9CA3AF' }}>({foundItems.length})</span>
             </h2>
-            <button
-              onClick={() => navigate('/report-found')}
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <button onClick={() => navigate('/report-found')}
+              className="text-sm hover:underline" style={{ color: '#2D6A4F' }}>
               + Post found item
             </button>
           </div>
 
           {foundItems.length === 0 ? (
-            <div className="bg-white border border-dashed border-gray-300 rounded-xl p-8 text-center">
+            <div className="rounded-2xl p-8 text-center border border-dashed"
+              style={{ backgroundColor: '#FFFFFF', borderColor: '#D1C9BB' }}>
               <p className="text-3xl mb-2">🔍</p>
-              <p className="text-gray-500 text-sm">You haven't posted any found items yet.</p>
-              <button
-                onClick={() => navigate('/report-found')}
-                className="mt-3 text-blue-600 text-sm hover:underline"
-              >
+              <p className="text-sm" style={{ color: '#6B7280' }}>You haven't posted any found items yet.</p>
+              <button onClick={() => navigate('/report-found')}
+                className="mt-3 text-sm hover:underline" style={{ color: '#2D6A4F' }}>
                 Post a found item →
               </button>
             </div>
           ) : (
             <div className="space-y-3">
               {foundItems.map(item => (
-                <div
-                  key={item.id}
-                  onClick={() => navigate(`/item/${item.id}`)}
-                  className="bg-white rounded-xl border border-gray-200 p-4 flex items-start justify-between gap-4 cursor-pointer hover:border-blue-300 hover:shadow-sm transition-all"
-                >
+                <div key={item.id} onClick={() => navigate(`/item/${item.id}`)}
+                  className="bg-white rounded-2xl border p-4 flex items-start justify-between gap-4 cursor-pointer hover:shadow-sm transition-all"
+                  style={{ borderColor: '#E8E2D8' }}>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                      <span className="text-xs px-2.5 py-0.5 rounded-full"
+                        style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
                         {item.category}
                       </span>
-                      {statusBadge(item.status, 'item')}
+                      {itemBadge(item.status)}
                     </div>
-                    <h3 className="font-semibold text-gray-800 text-sm">{item.title}</h3>
+                    <h3 className="font-semibold text-sm" style={{ color: '#1C2B1E' }}>{item.title}</h3>
                     {item.description && (
-                      <p className="text-gray-500 text-xs mt-0.5 line-clamp-1">{item.description}</p>
+                      <p className="text-xs mt-0.5 line-clamp-1" style={{ color: '#9CA3AF' }}>{item.description}</p>
                     )}
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-xs text-gray-400">{formatDate(item.created_at)}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">📍 {item.location}</p>
+                    <p className="text-xs" style={{ color: '#9CA3AF' }}>{formatDate(item.created_at)}</p>
+                    <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>📍 {item.location}</p>
                   </div>
                 </div>
               ))}
@@ -316,62 +319,57 @@ export default function Dashboard() {
 
         {/* ══ SECTION 3: My Claims (as claimer) ══ */}
         <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold text-gray-800">
-              🙋 My Claims
-              <span className="ml-2 text-sm font-normal text-gray-400">({myClaims.length})</span>
-            </h2>
-          </div>
+          <h2 className="text-base font-semibold mb-4" style={{ color: '#1C2B1E' }}>
+            🙋 My Claims
+            <span className="ml-2 text-sm font-normal" style={{ color: '#9CA3AF' }}>({myClaims.length})</span>
+          </h2>
 
           {myClaims.length === 0 ? (
-            <div className="bg-white border border-dashed border-gray-300 rounded-xl p-8 text-center">
+            <div className="rounded-2xl p-8 text-center border border-dashed"
+              style={{ backgroundColor: '#FFFFFF', borderColor: '#D1C9BB' }}>
               <p className="text-3xl mb-2">📋</p>
-              <p className="text-gray-500 text-sm">You haven't claimed any found items yet.</p>
-              <button
-                onClick={() => navigate('/')}
-                className="mt-3 text-blue-600 text-sm hover:underline"
-              >
+              <p className="text-sm" style={{ color: '#6B7280' }}>You haven't claimed any found items yet.</p>
+              <button onClick={() => navigate('/')}
+                className="mt-3 text-sm hover:underline" style={{ color: '#2D6A4F' }}>
                 Browse found items →
               </button>
             </div>
           ) : (
             <div className="space-y-3">
               {myClaims.map(claim => (
-                <div key={claim.id} className="bg-white rounded-xl border border-gray-200 p-4">
+                <div key={claim.id} className="bg-white rounded-2xl border p-4"
+                  style={{ borderColor: '#E8E2D8' }}>
                   <div className="flex items-start justify-between gap-4 mb-2">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                        <span className="text-xs px-2.5 py-0.5 rounded-full"
+                          style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
                           {claim.found_items?.category}
                         </span>
-                        {statusBadge(claim.status, 'claim')}
+                        {claimBadge(claim.status)}
                       </div>
-                      <h3 className="font-semibold text-gray-800 text-sm">
+                      <h3 className="font-semibold text-sm" style={{ color: '#1C2B1E' }}>
                         {claim.found_items?.title}
                       </h3>
-                      <p className="text-xs text-gray-400 mt-0.5">
+                      <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
                         📍 {claim.found_items?.location}
                       </p>
                     </div>
-                    <p className="text-xs text-gray-400 shrink-0">{formatDate(claim.created_at)}</p>
+                    <p className="text-xs shrink-0" style={{ color: '#9CA3AF' }}>{formatDate(claim.created_at)}</p>
                   </div>
 
-                  {/* Chat button for accepted claims */}
                   {claim.status === 'accepted' && (
-                    <button
-                      onClick={() => navigate(`/chat/${claim.id}`)}
-                      className="w-full mt-2 bg-blue-600 text-white text-sm py-2 rounded-lg hover:bg-blue-700 font-medium"
-                    >
+                    <button onClick={() => navigate(`/chat/${claim.id}`)}
+                      className="w-full mt-2 text-white text-sm py-2.5 rounded-xl hover:opacity-90 font-medium"
+                      style={{ backgroundColor: '#1C3829' }}>
                       💬 Open Chat →
                     </button>
                   )}
 
-                  {/* View item button for pending */}
                   {claim.status === 'pending' && (
-                    <button
-                      onClick={() => navigate(`/item/${claim.found_item_id}`)}
-                      className="w-full mt-2 border border-gray-200 text-gray-500 text-sm py-2 rounded-lg hover:bg-gray-50"
-                    >
+                    <button onClick={() => navigate(`/item/${claim.found_item_id}`)}
+                      className="w-full mt-2 border text-sm py-2 rounded-xl hover:opacity-70 transition-opacity"
+                      style={{ borderColor: '#E8E2D8', color: '#6B7280' }}>
                       View item →
                     </button>
                   )}
@@ -383,43 +381,42 @@ export default function Dashboard() {
 
         {/* ══ SECTION 4: My Lost Reports ══ */}
         <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold text-gray-800">
-              🔍 My Lost Reports
-              <span className="ml-2 text-sm font-normal text-gray-400">({lostItems.length})</span>
-            </h2>
-          </div>
+          <h2 className="text-base font-semibold mb-4" style={{ color: '#1C2B1E' }}>
+            🔍 My Lost Reports
+            <span className="ml-2 text-sm font-normal" style={{ color: '#9CA3AF' }}>({lostItems.length})</span>
+          </h2>
 
           {lostItems.length === 0 ? (
-            <div className="bg-white border border-dashed border-gray-300 rounded-xl p-8 text-center">
+            <div className="rounded-2xl p-8 text-center border border-dashed"
+              style={{ backgroundColor: '#FFFFFF', borderColor: '#D1C9BB' }}>
               <p className="text-3xl mb-2">📋</p>
-              <p className="text-gray-500 text-sm">You haven't reported any lost items yet.</p>
-              <button
-                onClick={() => navigate('/report-lost')}
-                className="mt-3 text-blue-600 text-sm hover:underline"
-              >
+              <p className="text-sm" style={{ color: '#6B7280' }}>You haven't reported any lost items yet.</p>
+              <button onClick={() => navigate('/report-lost')}
+                className="mt-3 text-sm hover:underline" style={{ color: '#2D6A4F' }}>
                 Report something lost →
               </button>
             </div>
           ) : (
             <div className="space-y-3">
               {lostItems.map(item => (
-                <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-4 flex items-start justify-between gap-4">
+                <div key={item.id} className="bg-white rounded-2xl border p-4 flex items-start justify-between gap-4"
+                  style={{ borderColor: '#E8E2D8' }}>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                      <span className="text-xs px-2.5 py-0.5 rounded-full"
+                        style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
                         {item.category}
                       </span>
-                      {statusBadge(item.status, 'item')}
+                      {itemBadge(item.status)}
                     </div>
-                    <h3 className="font-semibold text-gray-800 text-sm">{item.title}</h3>
+                    <h3 className="font-semibold text-sm" style={{ color: '#1C2B1E' }}>{item.title}</h3>
                     {item.description && (
-                      <p className="text-gray-500 text-xs mt-0.5 line-clamp-1">{item.description}</p>
+                      <p className="text-xs mt-0.5 line-clamp-1" style={{ color: '#9CA3AF' }}>{item.description}</p>
                     )}
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-xs text-gray-400">{formatDate(item.created_at)}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="text-xs" style={{ color: '#9CA3AF' }}>{formatDate(item.created_at)}</p>
+                    <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
                       📍 {item.location_last_seen || item.location}
                     </p>
                   </div>
