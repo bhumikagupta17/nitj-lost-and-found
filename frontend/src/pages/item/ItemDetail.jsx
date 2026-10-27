@@ -9,57 +9,37 @@ export default function ItemDetail() {
   const { user } = useAuth()
 
   const [item, setItem] = useState(null)
-  const [myClaim, setMyClaim] = useState(null)   // this user's claim on this item (if any)
+  const [myClaim, setMyClaim] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   const isOwner = item?.reported_by === user?.id
-
-  // Photo visible if: I'm the finder OR my claim was accepted
   const photoVisible = isOwner || myClaim?.status === 'accepted'
 
-  useEffect(() => {
-    fetchItem()
-  }, [id])
+  useEffect(() => { fetchItem() }, [id])
 
   async function fetchItem() {
     setLoading(true)
-
-    // Fetch item — plain select, no join (avoids RLS issues on users table)
     const { data: itemData, error: itemErr } = await supabase
-      .from('found_items')
-      .select('*')
-      .eq('id', id)
-      .single()
+      .from('found_items').select('*').eq('id', id).single()
 
     if (itemErr || !itemData) {
-      console.error('ItemDetail fetch error:', itemErr)
       setError('Item not found.')
       setLoading(false)
       return
     }
 
-    // Fetch poster's name separately (safe — users RLS is now open)
     const { data: posterData } = await supabase
-      .from('users')
-      .select('name, department')
-      .eq('id', itemData.reported_by)
-      .maybeSingle()
+      .from('users').select('name, department').eq('id', itemData.reported_by).maybeSingle()
 
     setItem({ ...itemData, users: posterData || null })
 
-    // Fetch my claim on this item (if any)
     if (user) {
       const { data: claimData } = await supabase
-        .from('claims')
-        .select('*')
-        .eq('found_item_id', id)
-        .eq('claimant_id', user.id)
-        .maybeSingle()
-
+        .from('claims').select('*')
+        .eq('found_item_id', id).eq('claimant_id', user.id).maybeSingle()
       setMyClaim(claimData || null)
     }
-
     setLoading(false)
   }
 
@@ -71,36 +51,37 @@ export default function ItemDetail() {
 
   function statusBadge(status) {
     const map = {
-      active:    { bg: 'bg-green-100',  text: 'text-green-700',  label: '🟢 Active' },
-      claimed:   { bg: 'bg-yellow-100', text: 'text-yellow-700', label: '⏳ Claimed' },
-      accepted:  { bg: 'bg-blue-100',   text: 'text-blue-700',   label: '✅ Accepted' },
-      closed:    { bg: 'bg-gray-100',   text: 'text-gray-500',   label: '✔ Closed' },
-      escalated: { bg: 'bg-red-100',    text: 'text-red-600',    label: '🚨 Escalated' },
+      active:    { bg: '#ECFDF5', color: '#059669', label: '🟢 Active' },
+      claimed:   { bg: '#FFFBEB', color: '#D97706', label: '⏳ Claimed' },
+      accepted:  { bg: '#EEF9F4', color: '#2D6A4F', label: '✅ Accepted' },
+      closed:    { bg: '#F3F4F6', color: '#6B7280', label: '✔ Closed' },
+      escalated: { bg: '#FEF2F2', color: '#DC2626', label: '🚨 Escalated' },
     }
     const s = map[status] || map.active
     return (
-      <span className={`${s.bg} ${s.text} text-xs px-2.5 py-1 rounded-full font-medium`}>
+      <span className="text-xs px-2.5 py-1 rounded-full font-medium"
+        style={{ backgroundColor: s.bg, color: s.color }}>
         {s.label}
       </span>
     )
   }
 
-  // ── Loading / Error ─────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-400 text-sm">Loading item...</p>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F0E8' }}>
+        <p className="text-sm" style={{ color: '#9CA3AF' }}>Loading item...</p>
       </div>
     )
   }
 
   if (error || !item) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F0E8' }}>
         <div className="text-center">
           <p className="text-2xl mb-2">😕</p>
-          <p className="text-gray-500 text-sm">{error || 'Item not found.'}</p>
-          <button onClick={() => navigate('/')} className="mt-4 text-blue-600 text-sm hover:underline">
+          <p className="text-sm" style={{ color: '#6B7280' }}>{error || 'Item not found.'}</p>
+          <button onClick={() => navigate('/')} className="mt-4 text-sm hover:underline"
+            style={{ color: '#1C3829' }}>
             ← Back to home
           </button>
         </div>
@@ -108,46 +89,39 @@ export default function ItemDetail() {
     )
   }
 
-  // ── Main UI ─────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white border-b px-6 py-4" style={{ borderColor: '#E8E2D8' }}>
         <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <button
-            onClick={() => navigate('/')}
-            className="text-sm text-gray-500 hover:text-gray-800"
-          >
+          <button onClick={() => navigate('/')}
+            className="text-sm hover:opacity-70 transition-opacity" style={{ color: '#6B7280' }}>
             ← Back to listings
           </button>
           {statusBadge(item.status)}
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-6 py-8 space-y-5">
+      <div className="max-w-2xl mx-auto px-6 py-8 space-y-4">
 
-        {/* Photo section */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {/* Photo */}
+        <div className="bg-white rounded-2xl border overflow-hidden" style={{ borderColor: '#E8E2D8' }}>
           {photoVisible ? (
-            // Show the real photo
             item.image_url ? (
-              <img
-                src={item.image_url}
-                alt={item.title}
-                className="w-full max-h-80 object-cover"
-              />
+              <img src={item.image_url} alt={item.title} className="w-full max-h-80 object-cover" />
             ) : (
-              <div className="h-48 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+              <div className="h-48 flex items-center justify-center text-sm"
+                style={{ backgroundColor: '#F5F0E8', color: '#9CA3AF' }}>
                 No photo uploaded
               </div>
             )
           ) : (
-            // Hidden — show blurred placeholder
-            <div className="h-48 bg-gray-200 flex flex-col items-center justify-center gap-2">
+            <div className="h-48 flex flex-col items-center justify-center gap-2"
+              style={{ backgroundColor: '#F5F0E8' }}>
               <span className="text-4xl">🔒</span>
-              <p className="text-sm text-gray-500 font-medium">Photo hidden</p>
-              <p className="text-xs text-gray-400 text-center px-6">
+              <p className="text-sm font-medium" style={{ color: '#374151' }}>Photo hidden</p>
+              <p className="text-xs text-center px-6" style={{ color: '#9CA3AF' }}>
                 {myClaim
                   ? 'Photo will be revealed once the finder accepts your claim.'
                   : 'Claim this item to reveal the photo after the finder verifies you.'}
@@ -157,106 +131,98 @@ export default function ItemDetail() {
         </div>
 
         {/* Item details */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-3">
-          <div className="flex items-start justify-between gap-3">
-            <h1 className="text-lg font-bold text-gray-800">{item.title}</h1>
-          </div>
+        <div className="bg-white rounded-2xl border p-5 space-y-3" style={{ borderColor: '#E8E2D8' }}>
+          <h1 className="text-lg font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+            {item.title}
+          </h1>
 
           <div className="flex flex-wrap gap-2">
-            <span className="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">
-              {item.category}
-            </span>
-            <span className="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">
-              📍 {item.location}
-            </span>
-            <span className="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">
-              🗓 {formatDate(item.created_at)}
-            </span>
+            {[item.category, `📍 ${item.location}`, `🗓 ${formatDate(item.created_at)}`].map(tag => (
+              <span key={tag} className="text-xs px-2.5 py-1 rounded-full"
+                style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
+                {tag}
+              </span>
+            ))}
           </div>
 
           {item.description && (
-            <p className="text-sm text-gray-600 leading-relaxed">{item.description}</p>
+            <p className="text-sm leading-relaxed" style={{ color: '#374151' }}>{item.description}</p>
           )}
 
-          <p className="text-xs text-gray-400">
+          <p className="text-xs" style={{ color: '#9CA3AF' }}>
             Posted by {item.users?.name || 'a student'}
             {item.users?.department ? ` · ${item.users.department}` : ''}
           </p>
         </div>
 
-        {/* ── Action area ── */}
-
-        {/* I'm the finder — show incoming claims */}
+        {/* Owner view */}
         {isOwner && (
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-            <p className="text-sm font-semibold text-blue-800 mb-1">📬 You posted this item</p>
-            <p className="text-xs text-blue-600">
+          <div className="rounded-2xl p-4" style={{ backgroundColor: '#EEF9F4', border: '1px solid #B7DFC9' }}>
+            <p className="text-sm font-semibold mb-1" style={{ color: '#1C3829' }}>📬 You posted this item</p>
+            <p className="text-xs mb-3" style={{ color: '#2D6A4F' }}>
               Go to your dashboard to review incoming claims and chat with claimers.
             </p>
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="mt-3 text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-            >
+            <button onClick={() => navigate('/dashboard')}
+              className="text-sm text-white px-4 py-2 rounded-xl hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: '#1C3829' }}>
               View my dashboard →
             </button>
           </div>
         )}
 
-        {/* Item is closed */}
+        {/* Item closed */}
         {!isOwner && item.status === 'closed' && (
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-500">This item has been returned to its owner. ✅</p>
+          <div className="rounded-2xl p-4 text-center bg-white border" style={{ borderColor: '#E8E2D8' }}>
+            <p className="text-sm" style={{ color: '#6B7280' }}>This item has been returned to its owner. ✅</p>
           </div>
         )}
 
-        {/* I have an accepted claim — show chat button */}
+        {/* Accepted claim */}
         {!isOwner && myClaim?.status === 'accepted' && (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-            <p className="text-sm font-semibold text-green-800 mb-1">✅ Your claim was accepted!</p>
-            <p className="text-xs text-green-700 mb-3">
+          <div className="rounded-2xl p-4" style={{ backgroundColor: '#EEF9F4', border: '1px solid #B7DFC9' }}>
+            <p className="text-sm font-semibold mb-1" style={{ color: '#1C3829' }}>✅ Your claim was accepted!</p>
+            <p className="text-xs mb-3" style={{ color: '#2D6A4F' }}>
               The photo is now visible above. Chat with the finder to arrange handover.
             </p>
-            <button
-              onClick={() => navigate(`/chat/${myClaim.id}`)}
-              className="text-sm bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-            >
+            <button onClick={() => navigate(`/chat/${myClaim.id}`)}
+              className="text-sm text-white px-4 py-2 rounded-xl hover:opacity-90"
+              style={{ backgroundColor: '#2D6A4F' }}>
               Open chat →
             </button>
           </div>
         )}
 
-        {/* I have a pending claim */}
+        {/* Pending claim */}
         {!isOwner && myClaim?.status === 'pending' && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-            <p className="text-sm font-semibold text-yellow-800 mb-1">⏳ Claim submitted — waiting for finder</p>
-            <p className="text-xs text-yellow-700">
+          <div className="rounded-2xl p-4" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}>
+            <p className="text-sm font-semibold mb-1" style={{ color: '#92400E' }}>⏳ Claim submitted — waiting for finder</p>
+            <p className="text-xs" style={{ color: '#B45309' }}>
               The finder will review your description and accept or reject your claim.
             </p>
           </div>
         )}
 
-        {/* I have a rejected claim */}
+        {/* Rejected claim */}
         {!isOwner && myClaim?.status === 'rejected' && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-            <p className="text-sm font-semibold text-red-700 mb-1">❌ Claim rejected</p>
-            <p className="text-xs text-red-600">
+          <div className="rounded-2xl p-4" style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA' }}>
+            <p className="text-sm font-semibold mb-1" style={{ color: '#DC2626' }}>❌ Claim rejected</p>
+            <p className="text-xs" style={{ color: '#B91C1C' }}>
               The finder didn't think your description matched. If this is truly yours, contact the NITJ security desk.
             </p>
           </div>
         )}
 
-        {/* No claim yet + item is active — show claim button */}
+        {/* Claim CTA */}
         {!isOwner && !myClaim && item.status === 'active' && (
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <p className="text-sm font-semibold text-gray-800 mb-1">Is this yours?</p>
-            <p className="text-xs text-gray-500 mb-4">
+          <div className="bg-white rounded-2xl border p-5" style={{ borderColor: '#E8E2D8' }}>
+            <p className="text-sm font-semibold mb-1" style={{ color: '#1C2B1E' }}>Is this yours?</p>
+            <p className="text-xs mb-4" style={{ color: '#6B7280' }}>
               You'll need to describe the item from memory — colour, brand, what's inside, any marks.
               The finder will read your description before revealing the photo.
             </p>
-            <button
-              onClick={() => navigate(`/item/${id}/claim`)}
-              className="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition-colors"
-            >
+            <button onClick={() => navigate(`/item/${id}/claim`)}
+              className="w-full text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: '#1C3829' }}>
               This is mine — prove it →
             </button>
           </div>
