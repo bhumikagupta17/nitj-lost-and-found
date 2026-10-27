@@ -25,19 +25,28 @@ export default function ItemDetail() {
   async function fetchItem() {
     setLoading(true)
 
-    // Fetch item
+    // Fetch item — plain select, no join (avoids RLS issues on users table)
     const { data: itemData, error: itemErr } = await supabase
       .from('found_items')
-      .select('*, users(name, department)')
+      .select('*')
       .eq('id', id)
       .single()
 
     if (itemErr || !itemData) {
+      console.error('ItemDetail fetch error:', itemErr)
       setError('Item not found.')
       setLoading(false)
       return
     }
-    setItem(itemData)
+
+    // Fetch poster's name separately (safe — users RLS is now open)
+    const { data: posterData } = await supabase
+      .from('users')
+      .select('name, department')
+      .eq('id', itemData.reported_by)
+      .maybeSingle()
+
+    setItem({ ...itemData, users: posterData || null })
 
     // Fetch my claim on this item (if any)
     if (user) {
