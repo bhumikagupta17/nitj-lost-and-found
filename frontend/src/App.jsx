@@ -5,6 +5,8 @@ import ProtectedRoute from './components/guards/ProtectedRoute.jsx'
 import ReportFound from './pages/found/ReportFound.jsx'
 import ReportLost from './pages/lost/ReportLost.jsx'
 import Dashboard from './pages/dashboard/Dashboard.jsx'
+import ItemDetail from './pages/item/ItemDetail.jsx'
+import ClaimForm from './pages/item/ClaimForm.jsx'
 
 export default function App() {
   return (
@@ -19,6 +21,8 @@ export default function App() {
         <Route path="/report-found" element={<ReportFound />} />
         <Route path="/report-lost" element={<ReportLost />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/item/:id" element={<ProtectedRoute><ItemDetail/></ProtectedRoute>}></Route>
+        <Route path="/item/:id/claim" element={<ProtectedRoute><ClaimForm/></ProtectedRoute>}></Route>
       </Routes>
     </BrowserRouter>
   )
