@@ -16,6 +16,7 @@ export default function ChatWindow() {
   const [sending, setSending] = useState(false)
   const [closing, setClosing] = useState(false)
   const [error, setError] = useState('')
+  const [confirming, setConfirming] = useState(false)
 
   const bottomRef = useRef(null)
 
@@ -31,6 +32,14 @@ export default function ChatWindow() {
         filter: `claim_id=eq.${claimId}`,
       }, (payload) => {
         setMessages(prev => [...prev, payload.new])
+      })
+      .on('postgres_changes', {
+        event: 'UPDATE', schema: 'public', table: 'claims',
+        filter: `id=eq.${claimId}`,
+      }, (payload) => {
+        setClaim(prev => ({ ...prev, ...payload.new }))
+        // If the other party just confirmed and now both are confirmed, navigate away
+        if (payload.new.status === 'closed') navigate('/dashboard')
       })
       .subscribe()
     return () => supabase.removeChannel(channel)
@@ -89,11 +98,36 @@ export default function ChatWindow() {
   }
 
   async function handleHandover() {
-    if (!window.confirm('Mark this item as handed over? This will close the listing.')) return
-    setClosing(true)
-    await supabase.from('found_items').update({ status: 'closed' }).eq('id', item.id)
-    await supabase.from('claims').update({ status: 'closed' }).eq('id', claimId)
-    navigate('/dashboard')
+    if (!window.confirm('Confirm you have completed the handover?')) return
+    setConfirming(true)
+
+    const field = isFinder ? 'finder_confirmed' : 'claimer_confirmed'
+    const { data: updated, error: updateErr } = await supabase
+      .from('claims')
+      .update({ [field]: true })
+      .eq('id', claimId)
+      .select()
+      .single()
+
+    if (updateErr) { setError('Something went wrong. Try again.'); setConfirming(false); return }
+
+    const finderDone   = isFinder  ? true : updated?.finder_confirmed
+    const claimerDone  = !isFinder ? true : updated?.claimer_confirmed
+
+    if (finderDone && claimerDone) {
+      // Both confirmed — close everything
+      setClosing(true)
+      if (isFinder) {
+        await supabase.from('found_items').update({ status: 'closed' }).eq('id', item.id)
+      }
+      await supabase.from('claims').update({ status: 'closed' }).eq('id', claimId)
+      navigate('/dashboard')
+      return
+    }
+
+    // Only this party confirmed so far — update local state so button changes
+    setClaim(prev => ({ ...prev, [field]: true }))
+    setConfirming(false)
   }
 
   function formatTime(dateStr) {
@@ -140,6 +174,9 @@ export default function ChatWindow() {
   const otherPersonLabel = isFinder ? 'Claimer' : 'Finder'
   const groupedMessages = groupByDate(messages)
 
+  const myConfirmed    = isFinder ? claim?.finder_confirmed  : claim?.claimer_confirmed
+  const theirConfirmed = isFinder ? claim?.claimer_confirmed : claim?.finder_confirmed
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F5F0E8' }}>
 
@@ -164,20 +201,32 @@ export default function ChatWindow() {
               </p>
             </div>
           </div>
-          {/* Right: handed over button */}
-          <button
-            onClick={handleHandover}
-            disabled={closing}
-            className="shrink-0 text-xs text-white px-2.5 sm:px-3 py-1.5 rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all"
-            style={{ backgroundColor: '#2D6A4F' }}
-          >
-            {closing ? '...' : (
-              <>
-                <span className="hidden sm:inline">✅ Handed Over</span>
-                <span className="sm:hidden">✅ Done</span>
-              </>
-            )}
-          </button>
+          {/* Right: handover confirmation */}
+          {myConfirmed ? (
+            <span className="shrink-0 text-xs px-2.5 sm:px-3 py-1.5 rounded-xl"
+              style={{ backgroundColor: '#EEF9F4', color: '#2D6A4F' }}>
+              <span className="hidden sm:inline">⏳ Waiting for {otherPersonLabel}…</span>
+              <span className="sm:hidden">⏳ Waiting…</span>
+            </span>
+          ) : (
+            <button
+              onClick={handleHandover}
+              disabled={closing || confirming}
+              className="shrink-0 text-xs text-white px-2.5 sm:px-3 py-1.5 rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all"
+              style={{ backgroundColor: theirConfirmed ? '#1C3829' : '#2D6A4F' }}
+            >
+              {closing || confirming ? '…' : (
+                <>
+                  <span className="hidden sm:inline">
+                    {theirConfirmed ? '✅ Confirm & Close' : '✅ Handed Over'}
+                  </span>
+                  <span className="sm:hidden">
+                    {theirConfirmed ? '✅ Confirm' : '✅ Done'}
+                  </span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
 
@@ -204,6 +253,24 @@ export default function ChatWindow() {
               Claim accepted — coordinate the handover here
             </span>
           </div>
+
+          {/* Handover progress banner */}
+          {(claim?.finder_confirmed || claim?.claimer_confirmed) && (
+            <div className="rounded-2xl px-4 py-3 text-xs text-center"
+              style={{ backgroundColor: '#EEF9F4', border: '1px solid #B7DFC9', color: '#2D6A4F' }}>
+              {claim?.finder_confirmed && claim?.claimer_confirmed ? (
+                <span>✅ Both parties confirmed — item closed.</span>
+              ) : (
+                <>
+                  <p className="font-medium">Handover confirmation in progress</p>
+                  <p className="mt-0.5" style={{ color: '#6B7280' }}>
+                    Finder: {claim?.finder_confirmed ? '✅ confirmed' : '⏳ pending'} ·{' '}
+                    Claimer: {claim?.claimer_confirmed ? '✅ confirmed' : '⏳ pending'}
+                  </p>
+                </>
+              )}
+            </div>
+          )}
 
           {Object.entries(groupedMessages).map(([date, msgs]) => (
             <div key={date}>
