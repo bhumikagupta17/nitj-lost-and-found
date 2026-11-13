@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../../lib/supabase'
-import { useAuth } from '../../hooks/useAuth'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../hooks/useAuth'
 
 function daysSince(d) {
   return Math.floor((Date.now() - new Date(d).getTime()) / 86400000)

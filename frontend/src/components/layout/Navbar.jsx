@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../hooks/useAuth'
-import { NotificationsBell } from './NotificationsBell'
+import { NotificationsBell } from '../NotificationsBell'
 
 export default function Navbar() {
   const navigate = useNavigate()

@@ -29,7 +29,7 @@ export default function ItemDetail() {
       const { data, error: err } = await supabase
         .from('found_items')
         // Note: DO NOT select users() here — finder info stays hidden from public
-        .select('id, title, category, description, location, status, created_at, photo_url')
+        .select('id, title, category, description, location, status, created_at, image_url')
         .eq('id', id)
         .single()
 
@@ -120,9 +120,9 @@ export default function ItemDetail() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-4">
 
         {/* Photo */}
-        {item.photo_url && (
+        {item.image_url && (
           <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid #E8E2D8' }}>
-            <img src={item.photo_url} alt={item.title}
+            <img src={item.image_url} alt={item.title}
               className="w-full object-cover max-h-72" />
           </div>
         )}
