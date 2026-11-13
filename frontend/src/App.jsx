@@ -9,8 +9,7 @@ import ReportFound from './pages/found/ReportFound.jsx'
 import ReportLost from './pages/lost/ReportLost.jsx'
 import Dashboard from './pages/dashboard/Dashboard.jsx'
 import ItemDetail from './pages/item/ItemDetail.jsx'
-import ClaimForm from './pages/item/ClaimForm.jsx'
-import ChatWindow from './pages/chat/ChatWindow.jsx'
+import LostItems from './pages/LostItems.jsx'
 import AdminPanel from './pages/admin/AdminPanel.jsx'
 import SecurityDesk from './pages/security/SecurityDesk.jsx'
 
@@ -36,11 +35,8 @@ export default function App() {
         <Route path="/item/:id" element={
           <ProtectedRoute><ItemDetail /></ProtectedRoute>
         } />
-        <Route path="/item/:id/claim" element={
-          <ProtectedRoute><ClaimForm /></ProtectedRoute>
-        } />
-        <Route path="/chat/:claimId" element={
-          <ProtectedRoute><ChatWindow /></ProtectedRoute>
+        <Route path="/lost-items" element={
+          <ProtectedRoute><LostItems /></ProtectedRoute>
         } />
         <Route path="/admin" element={
           <ProtectedRoute><AdminPanel /></ProtectedRoute>

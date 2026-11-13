@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../hooks/useAuth'
+import { NotificationsBell } from './NotificationsBell'
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -64,6 +65,15 @@ export default function Navbar() {
             Live on campus
           </div>
 
+          {/* Lost items link */}
+          <button
+            onClick={() => navigate('/lost-items')}
+            className="hidden sm:flex items-center gap-1 text-xs font-medium hover:opacity-70 active:scale-95 transition-all"
+            style={{ color: '#2D6A4F' }}
+          >
+            😟 Lost Items
+          </button>
+
           {/* Report item button */}
           <button
             onClick={() => navigate('/report-found')}
@@ -80,6 +90,9 @@ export default function Navbar() {
             <span className="text-base leading-none">+</span>
             <span className="hidden sm:inline">Report item</span>
           </button>
+
+          {/* Notifications bell */}
+          <NotificationsBell />
 
           {/* Avatar → goes to dashboard */}
           <button

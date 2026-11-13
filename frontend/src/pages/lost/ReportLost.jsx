@@ -2,193 +2,192 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../hooks/useAuth'
-import { CATEGORIES, LOCATIONS } from '../../lib/constants'
 
-const INPUT = 'w-full rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 placeholder-gray-400'
-const INPUT_STYLE = { border: '1px solid #E8E2D8', color: '#1C2B1E', outlineColor: '#1C3829' }
+const CATEGORIES = [
+  'Electronics', 'Bag / Backpack', 'Wallet / Purse', 'ID / Card',
+  'Keys', 'Books / Notes', 'Clothing', 'Jewellery', 'Stationery', 'Other',
+]
 
 export default function ReportLost() {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [form, setForm] = useState({
-    title: '', description: '', category: '',
-    category_other: '', location: '', location_other: '',
-  })
 
-  function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value })
+  const [form, setForm] = useState({
+    title: '',
+    category: '',
+    description: '',
+    last_seen_location: '',
+    lost_date: '',
+  })
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+
+  function set(field, value) {
+    setForm(prev => ({ ...prev, [field]: value }))
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (!form.title.trim() || !form.category) {
+      setError('Please fill in the item name and category.')
+      return
+    }
+    setSubmitting(true)
     setError('')
-    if (!form.category) { setError('Please select a category.'); return }
-    if (!form.location) { setError('Please select a location.'); return }
-    setLoading(true)
-    const { error: insertError } = await supabase.from('lost_items').insert({
-      title: form.title,
-      description: form.description,
-      category: form.category === 'Other' ? form.category_other : form.category,
-      location: form.location === 'Other' ? form.location_other : form.location,
-      status: 'active',
-      reported_by: user.id,
+
+    const { error: err } = await supabase.from('lost_reports').insert({
+      user_id:            user.id,
+      title:              form.title.trim(),
+      category:           form.category,
+      description:        form.description.trim() || null,
+      last_seen_location: form.last_seen_location.trim() || null,
+      lost_date:          form.lost_date || null,
     })
-    if (insertError) { setError(insertError.message); setLoading(false); return }
+
+    if (err) {
+      setError(err.message)
+      setSubmitting(false)
+      return
+    }
     navigate('/dashboard')
   }
 
   return (
-    <div
-      className="min-h-screen flex items-start justify-center pt-6 sm:pt-10 px-4 pb-8"
-      style={{ backgroundColor: '#F5F0E8' }}
-    >
-      <div className="w-full max-w-lg">
+    <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
 
-        {/* Back */}
-        <button
-          onClick={() => navigate('/')}
-          className="text-sm mb-4 flex items-center gap-1 hover:underline active:opacity-70"
-          style={{ color: '#6B7280' }}
-        >
-          ← Back to home
-        </button>
-
-        <div
-          className="bg-white rounded-2xl p-5 sm:p-8"
-          style={{ border: '1px solid #E8E2D8', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
-        >
-          <div className="mb-5 sm:mb-6">
-            <h1
-              className="text-lg sm:text-xl font-bold"
-              style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}
-            >
-              Report Lost Item
+      {/* Header */}
+      <div className="bg-white border-b px-4 sm:px-6 py-3 sm:py-4" style={{ borderColor: '#E8E2D8' }}>
+        <div className="max-w-xl mx-auto flex items-center justify-between">
+          <div>
+            <h1 className="text-base sm:text-lg font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+              😟 Report a Lost Item
             </h1>
-            <p className="text-sm mt-1" style={{ color: '#6B7280' }}>
-              Describe what you lost and where you last had it.
+            <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
+              We'll notify you if a matching item is found and handed to security.
             </p>
+          </div>
+          <button onClick={() => navigate(-1)} className="text-sm hover:opacity-70 active:scale-95 transition-all"
+            style={{ color: '#6B7280' }}>← Back</button>
+        </div>
+      </div>
+
+      <div className="max-w-xl mx-auto px-4 sm:px-6 py-6">
+
+        {/* Info banner */}
+        <div className="rounded-2xl px-4 py-3 mb-6 text-xs" style={{ backgroundColor: '#EEF9F4', border: '1px solid #B7DFC9', color: '#2D6A4F' }}>
+          <strong>How it works:</strong> File your report below. If a matching found item is registered and collected by security,
+          you'll get a notification to visit the Security Desk with your ID to collect it.
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+
+          {/* Item name */}
+          <div>
+            <label className="block text-xs font-semibold mb-1.5" style={{ color: '#374151' }}>
+              What did you lose? <span style={{ color: '#DC2626' }}>*</span>
+            </label>
+            <input
+              type="text"
+              value={form.title}
+              onChange={e => set('title', e.target.value)}
+              placeholder="e.g. Black OnePlus phone, Blue Jansport bag"
+              className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+              style={{ border: '1.5px solid #E8E2D8', color: '#1C2B1E', backgroundColor: '#fff' }}
+              maxLength={120}
+            />
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className="block text-xs font-semibold mb-1.5" style={{ color: '#374151' }}>
+              Category <span style={{ color: '#DC2626' }}>*</span>
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => set('category', cat)}
+                  className="text-xs px-3 py-1.5 rounded-full border transition-all active:scale-95"
+                  style={form.category === cat
+                    ? { backgroundColor: '#1C3829', color: '#fff', borderColor: '#1C3829' }
+                    : { backgroundColor: '#fff', color: '#374151', borderColor: '#E8E2D8' }
+                  }
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-xs font-semibold mb-1.5" style={{ color: '#374151' }}>
+              Description <span className="font-normal" style={{ color: '#9CA3AF' }}>(optional — the more detail, the better)</span>
+            </label>
+            <textarea
+              value={form.description}
+              onChange={e => set('description', e.target.value)}
+              placeholder="Colour, brand, distinguishing marks, what was inside, etc."
+              rows={3}
+              className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none resize-none"
+              style={{ border: '1.5px solid #E8E2D8', color: '#1C2B1E', backgroundColor: '#fff' }}
+              maxLength={500}
+            />
+          </div>
+
+          {/* Last seen location */}
+          <div>
+            <label className="block text-xs font-semibold mb-1.5" style={{ color: '#374151' }}>
+              Where did you last have it? <span className="font-normal" style={{ color: '#9CA3AF' }}>(optional)</span>
+            </label>
+            <input
+              type="text"
+              value={form.last_seen_location}
+              onChange={e => set('last_seen_location', e.target.value)}
+              placeholder="e.g. Library, Block 3 classroom, Canteen"
+              className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+              style={{ border: '1.5px solid #E8E2D8', color: '#1C2B1E', backgroundColor: '#fff' }}
+              maxLength={120}
+            />
+          </div>
+
+          {/* Date lost */}
+          <div>
+            <label className="block text-xs font-semibold mb-1.5" style={{ color: '#374151' }}>
+              Date lost <span className="font-normal" style={{ color: '#9CA3AF' }}>(optional)</span>
+            </label>
+            <input
+              type="date"
+              value={form.lost_date}
+              onChange={e => set('lost_date', e.target.value)}
+              max={new Date().toISOString().split('T')[0]}
+              className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+              style={{ border: '1.5px solid #E8E2D8', color: '#1C2B1E', backgroundColor: '#fff' }}
+            />
+          </div>
+
+          {/* Privacy note */}
+          <div className="rounded-xl px-4 py-3 text-xs" style={{ backgroundColor: '#F5F0E8', border: '1px solid #E8E2D8', color: '#6B7280' }}>
+            📋 Your name and department will be visible on the portal so security can verify and contact you if needed.
           </div>
 
           {error && (
-            <div
-              className="text-sm px-4 py-3 rounded-xl mb-4"
-              style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626' }}
-            >
+            <div className="rounded-xl px-4 py-3 text-xs" style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#DC2626' }}>
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full text-white font-semibold py-3 rounded-xl hover:opacity-90 disabled:opacity-50 active:scale-95 transition-all text-sm"
+            style={{ backgroundColor: '#1C3829' }}
+          >
+            {submitting ? 'Submitting…' : 'Submit Lost Report'}
+          </button>
 
-            <div>
-              <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
-                Item Title <span style={{ color: '#DC2626' }}>*</span>
-              </label>
-              <input
-                name="title"
-                type="text"
-                placeholder="e.g. Blue JBL earphones"
-                value={form.title}
-                onChange={handleChange}
-                required
-                className={INPUT}
-                style={INPUT_STYLE}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
-                Category <span style={{ color: '#DC2626' }}>*</span>
-              </label>
-              <select
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                className={INPUT}
-                style={INPUT_STYLE}
-              >
-                <option value="">Select a category</option>
-                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-              {form.category === 'Other' && (
-                <input
-                  name="category_other"
-                  type="text"
-                  placeholder="Describe the item type…"
-                  value={form.category_other}
-                  onChange={handleChange}
-                  className={`${INPUT} mt-2`}
-                  style={INPUT_STYLE}
-                />
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
-                Where did you last have it? <span style={{ color: '#DC2626' }}>*</span>
-              </label>
-              <select
-                name="location"
-                value={form.location}
-                onChange={handleChange}
-                className={INPUT}
-                style={INPUT_STYLE}
-              >
-                <option value="">Select a location</option>
-                {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
-              </select>
-              {form.location === 'Other' && (
-                <input
-                  name="location_other"
-                  type="text"
-                  placeholder="Describe the location…"
-                  value={form.location_other}
-                  onChange={handleChange}
-                  className={`${INPUT} mt-2`}
-                  style={INPUT_STYLE}
-                />
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
-                Description{' '}
-                <span className="text-sm font-normal" style={{ color: '#9CA3AF' }}>(optional)</span>
-              </label>
-              <textarea
-                name="description"
-                placeholder="Colour, brand, any identifying features…"
-                value={form.description}
-                onChange={handleChange}
-                rows={3}
-                className={`${INPUT} resize-none`}
-                style={INPUT_STYLE}
-              />
-            </div>
-
-            <div className="flex gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => navigate('/')}
-                className="flex-1 py-2.5 rounded-xl text-sm transition-all hover:opacity-80 active:scale-95"
-                style={{ border: '1px solid #E8E2D8', color: '#6B7280', backgroundColor: '#FFFFFF' }}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 text-white py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
-                style={{ backgroundColor: '#1C3829' }}
-              >
-                {loading ? 'Submitting…' : 'Submit Report'}
-              </button>
-            </div>
-
-          </form>
-        </div>
+        </form>
       </div>
     </div>
   )
