@@ -11,12 +11,12 @@ function formatDate(d) { return new Date(d).toLocaleDateString('en-IN', { day: '
 function AccessDenied() {
   const navigate = useNavigate()
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F0E8' }}>
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F4F7FB' }}>
       <div className="text-center">
         <p className="text-5xl mb-4">🚫</p>
         <h2 className="text-lg font-semibold mb-1" style={{ color: '#374151' }}>Access Denied</h2>
         <p className="text-sm mb-4" style={{ color: '#9CA3AF' }}>This page is for security personnel only.</p>
-        <button onClick={() => navigate('/')} className="text-sm hover:underline" style={{ color: '#1C3829' }}>← Home</button>
+        <button onClick={() => navigate('/')} className="text-sm hover:underline" style={{ color: '#1565A7' }}>← Home</button>
       </div>
     </div>
   )
@@ -54,13 +54,13 @@ function NotifyModal({ item, onClose }) {
       style={{ backgroundColor: 'rgba(0,0,0,0.45)' }} onClick={onClose}>
       <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl"
         onClick={e => e.stopPropagation()}>
-        <p className="font-semibold text-sm mb-0.5" style={{ color: '#1C2B1E' }}>📣 Notify a Lost Student</p>
+        <p className="font-semibold text-sm mb-0.5" style={{ color: '#1A2C45' }}>📣 Notify a Lost Student</p>
         <p className="text-xs mb-4 line-clamp-1" style={{ color: '#9CA3AF' }}>Item: {item.title}</p>
 
         {done ? (
           <div className="text-center py-4">
             <p className="text-2xl mb-2">✅</p>
-            <p className="text-sm font-medium" style={{ color: '#2D6A4F' }}>Notification sent!</p>
+            <p className="text-sm font-medium" style={{ color: '#1565A7' }}>Notification sent!</p>
             <button onClick={onClose} className="mt-4 text-xs hover:underline" style={{ color: '#6B7280' }}>Close</button>
           </div>
         ) : (
@@ -74,10 +74,10 @@ function NotifyModal({ item, onClose }) {
                 <button key={r.id} onClick={() => setSelected(r)}
                   className="w-full text-left px-3 py-2.5 rounded-xl border text-xs transition-all"
                   style={selected?.id === r.id
-                    ? { backgroundColor: '#EEF9F4', borderColor: '#2D6A4F' }
-                    : { backgroundColor: '#F9FAFB', borderColor: '#E8E2D8' }
+                    ? { backgroundColor: '#EAF4FF', borderColor: '#1565A7' }
+                    : { backgroundColor: '#F9FAFB', borderColor: '#DCE8F7' }
                   }>
-                  <p className="font-medium" style={{ color: '#1C2B1E' }}>{r.title}</p>
+                  <p className="font-medium" style={{ color: '#1A2C45' }}>{r.title}</p>
                   <p style={{ color: '#6B7280' }}>{r.users?.name} · {r.category}</p>
                 </button>
               ))}
@@ -85,12 +85,12 @@ function NotifyModal({ item, onClose }) {
             <div className="flex gap-2">
               <button onClick={onClose}
                 className="flex-1 text-xs py-2 rounded-xl border hover:opacity-70 active:scale-95 transition-all"
-                style={{ borderColor: '#E8E2D8', color: '#374151' }}>
+                style={{ borderColor: '#DCE8F7', color: '#374151' }}>
                 Cancel
               </button>
               <button onClick={sendNotification} disabled={!selected || sending}
                 className="flex-1 text-xs py-2 rounded-xl text-white hover:opacity-90 disabled:opacity-50 active:scale-95 transition-all"
-                style={{ backgroundColor: '#1C3829' }}>
+                style={{ backgroundColor: '#1565A7' }}>
                 {sending ? '…' : 'Send Notification'}
               </button>
             </div>
@@ -110,19 +110,19 @@ function ItemCard({ item, onCustody, onClose, actionLoading }) {
 
   const statusBadge = {
     active:     { label: '🕐 Active',      bg: '#FFF7ED', color: '#C2410C' },
-    in_custody: { label: '📦 In Custody',  bg: '#EEF9F4', color: '#2D6A4F' },
+    in_custody: { label: '📦 In Custody',  bg: '#EAF4FF', color: '#1565A7' },
     escalated:  { label: '⚠️ Escalated',   bg: '#FFF7ED', color: '#C2410C' },
     closed:     { label: '✅ Closed',      bg: '#F0FDF4', color: '#166534' },
-  }[status] || { label: status, bg: '#F5F0E8', color: '#374151' }
+  }[status] || { label: status, bg: '#F4F7FB', color: '#374151' }
 
   return (
     <>
       {showNotify && <NotifyModal item={item} onClose={() => setShowNotify(false)} />}
-      <div className="bg-white rounded-2xl border p-4 hover:shadow-sm transition-all" style={{ borderColor: '#E8E2D8' }}>
+      <div className="bg-white rounded-2xl border p-4 hover:shadow-sm transition-all" style={{ borderColor: '#DCE8F7' }}>
 
         <div className="flex items-start justify-between gap-2 mb-3">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
+            <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: '#F4F7FB', color: '#374151' }}>
               {item.category}
             </span>
             <span className="text-xs px-2 py-0.5 rounded-full font-medium"
@@ -133,12 +133,12 @@ function ItemCard({ item, onCustody, onClose, actionLoading }) {
           <span className="text-xs shrink-0" style={{ color: '#9CA3AF' }}>{days}d ago</span>
         </div>
 
-        <h3 className="font-semibold text-sm mb-1 truncate" style={{ color: '#1C2B1E' }}>{item.title}</h3>
+        <h3 className="font-semibold text-sm mb-1 truncate" style={{ color: '#1A2C45' }}>{item.title}</h3>
         {item.description && (
           <p className="text-xs mb-2 line-clamp-2" style={{ color: '#9CA3AF' }}>{item.description}</p>
         )}
 
-        <div className="h-px my-2" style={{ backgroundColor: '#E8E2D8' }} />
+        <div className="h-px my-2" style={{ backgroundColor: '#DCE8F7' }} />
         <div className="flex items-center justify-between text-xs mb-3" style={{ color: '#9CA3AF' }}>
           <span className="truncate mr-2">📍 {item.location}</span>
           <span className="shrink-0">Found {formatDate(item.created_at)}</span>
@@ -146,7 +146,7 @@ function ItemCard({ item, onCustody, onClose, actionLoading }) {
 
         {/* Finder info — visible to security only */}
         {item.users && (
-          <div className="text-xs px-3 py-2 rounded-xl mb-3" style={{ backgroundColor: '#F5F0E8' }}>
+          <div className="text-xs px-3 py-2 rounded-xl mb-3" style={{ backgroundColor: '#F4F7FB' }}>
             <span className="font-medium" style={{ color: '#374151' }}>Reported by: </span>
             <span style={{ color: '#6B7280' }}>
               {item.users.name}{item.users.department && ` · ${item.users.department}`}
@@ -166,12 +166,12 @@ function ItemCard({ item, onCustody, onClose, actionLoading }) {
         <div className="flex gap-2 flex-wrap">
           <button onClick={() => navigate(`/item/${item.id}`)}
             className="text-xs rounded-xl py-2 px-3 border hover:opacity-70 active:scale-95 transition-all"
-            style={{ borderColor: '#E8E2D8', color: '#374151' }}>
+            style={{ borderColor: '#DCE8F7', color: '#374151' }}>
             View →
           </button>
           <button onClick={() => setShowNotify(true)}
             className="text-xs rounded-xl py-2 px-3 border hover:opacity-70 active:scale-95 transition-all"
-            style={{ borderColor: '#E8E2D8', color: '#374151' }}
+            style={{ borderColor: '#DCE8F7', color: '#374151' }}
             title="Manually notify a lost student">
             📣 Notify
           </button>
@@ -179,7 +179,7 @@ function ItemCard({ item, onCustody, onClose, actionLoading }) {
           {status !== 'in_custody' && status !== 'closed' && (
             <button onClick={() => onCustody(item.id)} disabled={actionLoading === item.id}
               className="flex-1 text-xs text-white rounded-xl py-2 hover:opacity-90 disabled:opacity-50 font-medium active:scale-95 transition-all"
-              style={{ backgroundColor: '#2D6A4F' }}>
+              style={{ backgroundColor: '#1976D2' }}>
               {actionLoading === item.id ? '…' : '📦 Mark In Custody'}
             </button>
           )}
@@ -187,7 +187,7 @@ function ItemCard({ item, onCustody, onClose, actionLoading }) {
           {status === 'in_custody' && (
             <button onClick={() => onClose(item.id)} disabled={actionLoading === item.id}
               className="flex-1 text-xs text-white rounded-xl py-2 hover:opacity-90 disabled:opacity-50 font-medium active:scale-95 transition-all"
-              style={{ backgroundColor: '#1C3829' }}>
+              style={{ backgroundColor: '#1565A7' }}>
               {actionLoading === item.id ? '…' : '✅ Mark Returned'}
             </button>
           )}
@@ -212,11 +212,11 @@ function StatsRow() {
   return (
     <div className="grid grid-cols-3 gap-3 mb-2">
       {[
-        { icon: '🕐', label: 'Active',       value: stats.active,       bg: '#FFF7ED', color: '#C2410C' },
-        { icon: '📦', label: 'In Custody',   value: stats.in_custody,   bg: '#EEF9F4', color: '#2D6A4F' },
-        { icon: '✅', label: 'Returned Today',value: stats.closed_today, bg: '#F0FDF4', color: '#166534' },
+        { icon: '🕐', label: 'Active',        value: stats.active,       bg: '#FFF7ED', color: '#C2410C' },
+        { icon: '📦', label: 'In Custody',    value: stats.in_custody,   bg: '#EAF4FF', color: '#1565A7' },
+        { icon: '✅', label: 'Returned Today', value: stats.closed_today, bg: '#F0FDF4', color: '#166534' },
       ].map(t => (
-        <div key={t.label} className="rounded-2xl p-3 sm:p-4 border" style={{ backgroundColor: t.bg, borderColor: '#E8E2D8' }}>
+        <div key={t.label} className="rounded-2xl p-3 sm:p-4 border" style={{ backgroundColor: t.bg, borderColor: '#DCE8F7' }}>
           <span className="text-xl sm:text-2xl block mb-1">{t.icon}</span>
           <p className="text-xl sm:text-2xl font-bold" style={{ color: t.color }}>{t.value}</p>
           <p className="text-xs mt-0.5" style={{ color: '#6B7280' }}>{t.label}</p>
@@ -237,7 +237,7 @@ export default function SecurityDesk() {
   const [error, setError] = useState('')
 
   if (authLoading) return (
-    <div className="min-h-screen flex items-center justify-center text-sm" style={{ backgroundColor: '#F5F0E8', color: '#9CA3AF' }}>Loading…</div>
+    <div className="min-h-screen flex items-center justify-center text-sm" style={{ backgroundColor: '#F4F7FB', color: '#9CA3AF' }}>Loading…</div>
   )
   if (!user || (profile?.role !== 'security' && profile?.role !== 'admin')) return <AccessDenied />
 
@@ -301,12 +301,12 @@ export default function SecurityDesk() {
   ]
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F4F7FB' }}>
 
-      <div className="bg-white border-b px-4 sm:px-6 py-3 sm:py-4" style={{ borderColor: '#E8E2D8' }}>
+      <div className="bg-white border-b px-4 sm:px-6 py-3 sm:py-4" style={{ borderColor: '#DCE8F7' }}>
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-base sm:text-lg font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+            <h1 className="text-base sm:text-lg font-bold" style={{ color: '#1A2C45', fontFamily: "'Lora','Georgia',serif" }}>
               🛡️ Security Desk
             </h1>
             <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
@@ -321,12 +321,12 @@ export default function SecurityDesk() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
         <StatsRow />
 
-        <div className="flex gap-1 rounded-2xl p-1 my-5 w-fit" style={{ backgroundColor: '#E8E2D8' }}>
+        <div className="flex gap-1 rounded-2xl p-1 my-5 w-fit" style={{ backgroundColor: '#DCE8F7' }}>
           {tabs.map(t => (
             <button key={t.key} onClick={() => setTab(t.key)}
               className="px-3 sm:px-4 py-2 rounded-xl text-sm font-medium transition-all active:scale-95"
               style={tab === t.key
-                ? { backgroundColor: '#FFFFFF', color: '#1C2B1E', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }
+                ? { backgroundColor: '#FFFFFF', color: '#1A2C45', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }
                 : { color: '#6B7280' }
               }>
               {t.label}
@@ -336,7 +336,7 @@ export default function SecurityDesk() {
         </div>
 
         {tab === 'active' && (
-          <div className="rounded-2xl px-4 py-3 mb-5 text-xs" style={{ backgroundColor: '#EEF9F4', border: '1px solid #B7DFC9', color: '#2D6A4F' }}>
+          <div className="rounded-2xl px-4 py-3 mb-5 text-xs" style={{ backgroundColor: '#EAF4FF', border: '1px solid #93C6F0', color: '#1976D2' }}>
             <strong>Workflow:</strong> Collect the physical item from the finder, then click <strong>Mark In Custody</strong>.
             This triggers auto-matching — any lost student with a matching report gets notified automatically.
             You can also manually notify a specific student using the <strong>📣 Notify</strong> button.

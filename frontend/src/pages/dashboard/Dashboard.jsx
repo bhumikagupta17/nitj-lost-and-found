@@ -103,7 +103,7 @@ export default function Dashboard() {
   function claimBadge(status) {
     const map = {
       pending:  { bg: '#FFFBEB', color: '#D97706', label: '⏳ Pending' },
-      accepted: { bg: '#EEF9F4', color: '#2D6A4F', label: '✅ Accepted' },
+      accepted: { bg: '#EAF4FF', color: '#1565A7', label: '✅ Accepted' },
       rejected: { bg: '#FEF2F2', color: '#DC2626', label: '❌ Rejected' },
       closed:   { bg: '#F3F4F6', color: '#6B7280', label: '✔ Closed' },
     }
@@ -120,7 +120,7 @@ export default function Dashboard() {
     const map = {
       active:    { bg: '#ECFDF5', color: '#059669', label: '🟢 Active' },
       claimed:   { bg: '#FFFBEB', color: '#D97706', label: '⏳ Claimed' },
-      accepted:  { bg: '#EEF9F4', color: '#2D6A4F', label: '💬 In Chat' },
+      accepted:  { bg: '#EAF4FF', color: '#1565A7', label: '💬 In Chat' },
       closed:    { bg: '#F3F4F6', color: '#6B7280', label: '✔ Closed' },
       escalated: { bg: '#FEF2F2', color: '#DC2626', label: '🚨 Escalated' },
     }
@@ -135,7 +135,7 @@ export default function Dashboard() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F0E8' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F4F7FB' }}>
         <p className="text-sm" style={{ color: '#9CA3AF' }}>Loading your dashboard...</p>
       </div>
     )
@@ -144,13 +144,13 @@ export default function Dashboard() {
   const pendingIncoming = incomingClaims.filter(c => c.status === 'pending')
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F4F7FB' }}>
 
       {/* Header */}
-      <div className="bg-white border-b" style={{ borderColor: '#E8E2D8' }}>
+      <div className="bg-white border-b" style={{ borderColor: '#DCE8F7' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-lg sm:text-xl font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+            <h1 className="text-lg sm:text-xl font-bold" style={{ color: '#1A2C45', fontFamily: "'Lora','Georgia',serif" }}>
               My Dashboard
             </h1>
             <p className="text-sm mt-0.5" style={{ color: '#9CA3AF' }}>
@@ -161,14 +161,14 @@ export default function Dashboard() {
             <button
               onClick={() => navigate('/')}
               className="border text-sm px-3 sm:px-4 py-2 rounded-xl hover:opacity-70 active:scale-95 transition-all"
-              style={{ borderColor: '#E8E2D8', color: '#6B7280' }}
+              style={{ borderColor: '#DCE8F7', color: '#6B7280' }}
             >
               ← Home
             </button>
             <button
               onClick={() => navigate('/report-lost')}
               className="text-white text-sm px-3 sm:px-4 py-2 rounded-xl hover:opacity-90 active:scale-95 transition-all font-medium"
-              style={{ backgroundColor: '#1C3829' }}
+              style={{ backgroundColor: '#1565A7' }}
             >
               + Report Lost
             </button>
@@ -180,7 +180,7 @@ export default function Dashboard() {
 
         {/* ══ SECTION 1: Incoming Claims ══ */}
         <section>
-          <h2 className="text-base font-semibold mb-3 sm:mb-4" style={{ color: '#1C2B1E' }}>
+          <h2 className="text-base font-semibold mb-3 sm:mb-4" style={{ color: '#1A2C45' }}>
             📬 Incoming Claims
             {pendingIncoming.length > 0 && (
               <span className="ml-2 text-white text-xs px-2 py-0.5 rounded-full"
@@ -192,7 +192,7 @@ export default function Dashboard() {
 
           {incomingClaims.length === 0 ? (
             <div className="rounded-2xl p-6 sm:p-8 text-center border border-dashed"
-              style={{ backgroundColor: '#FFFFFF', borderColor: '#D1C9BB' }}>
+              style={{ backgroundColor: '#FFFFFF', borderColor: '#DCE8F7' }}>
               <p className="text-3xl mb-2">📭</p>
               <p className="text-sm" style={{ color: '#6B7280' }}>No one has claimed your found items yet.</p>
             </div>
@@ -203,14 +203,14 @@ export default function Dashboard() {
                   key={claim.id}
                   className="bg-white rounded-2xl p-4 sm:p-5"
                   style={{
-                    border: claim.status === 'pending' ? '1px solid #B7DFC9' : '1px solid #E8E2D8',
-                    boxShadow: claim.status === 'pending' ? '0 1px 4px rgba(45,106,79,0.08)' : 'none',
+                    border: claim.status === 'pending' ? '1px solid #93C6F0' : '1px solid #DCE8F7',
+                    boxShadow: claim.status === 'pending' ? '0 1px 4px rgba(21,101,167,0.08)' : 'none',
                   }}
                 >
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="min-w-0 flex-1">
                       <p className="text-xs mb-0.5" style={{ color: '#9CA3AF' }}>Claim on</p>
-                      <p className="text-sm font-semibold truncate" style={{ color: '#1C2B1E' }}>
+                      <p className="text-sm font-semibold truncate" style={{ color: '#1A2C45' }}>
                         {claim.found_items?.title}
                       </p>
                       <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
@@ -226,7 +226,7 @@ export default function Dashboard() {
                   </div>
 
                   {claim.proof_description && (
-                    <div className="rounded-xl p-3 mb-3" style={{ backgroundColor: '#F5F0E8' }}>
+                    <div className="rounded-xl p-3 mb-3" style={{ backgroundColor: '#F4F7FB' }}>
                       <p className="text-xs font-medium uppercase tracking-wide mb-1" style={{ color: '#9CA3AF' }}>
                         Their ownership description:
                       </p>
@@ -242,7 +242,7 @@ export default function Dashboard() {
                         onClick={() => acceptClaim(claim)}
                         disabled={actionLoading === claim.id}
                         className="flex-1 text-white text-sm py-2.5 rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all font-medium"
-                        style={{ backgroundColor: '#2D6A4F' }}
+                        style={{ backgroundColor: '#1976D2' }}
                       >
                         {actionLoading === claim.id ? '...' : (
                           <>
@@ -266,7 +266,7 @@ export default function Dashboard() {
                     <button
                       onClick={() => navigate(`/chat/${claim.id}`)}
                       className="w-full text-white text-sm py-2.5 rounded-xl hover:opacity-90 active:scale-95 transition-all font-medium"
-                      style={{ backgroundColor: '#1C3829' }}
+                      style={{ backgroundColor: '#1565A7' }}
                     >
                       💬 Open Chat →
                     </button>
@@ -280,14 +280,14 @@ export default function Dashboard() {
         {/* ══ SECTION 2: Items I Found & Posted ══ */}
         <section>
           <div className="flex items-center justify-between mb-3 sm:mb-4">
-            <h2 className="text-base font-semibold" style={{ color: '#1C2B1E' }}>
+            <h2 className="text-base font-semibold" style={{ color: '#1A2C45' }}>
               📦 Items I Found &amp; Posted
               <span className="ml-2 text-sm font-normal" style={{ color: '#9CA3AF' }}>({foundItems.length})</span>
             </h2>
             <button
               onClick={() => navigate('/report-found')}
               className="text-sm hover:underline active:opacity-70 shrink-0"
-              style={{ color: '#2D6A4F' }}
+              style={{ color: '#1976D2' }}
             >
               + Post found
             </button>
@@ -295,11 +295,11 @@ export default function Dashboard() {
 
           {foundItems.length === 0 ? (
             <div className="rounded-2xl p-6 sm:p-8 text-center border border-dashed"
-              style={{ backgroundColor: '#FFFFFF', borderColor: '#D1C9BB' }}>
+              style={{ backgroundColor: '#FFFFFF', borderColor: '#DCE8F7' }}>
               <p className="text-3xl mb-2">🔍</p>
               <p className="text-sm" style={{ color: '#6B7280' }}>You haven't posted any found items yet.</p>
               <button onClick={() => navigate('/report-found')}
-                className="mt-3 text-sm hover:underline active:opacity-70" style={{ color: '#2D6A4F' }}>
+                className="mt-3 text-sm hover:underline active:opacity-70" style={{ color: '#1976D2' }}>
                 Post a found item →
               </button>
             </div>
@@ -310,17 +310,17 @@ export default function Dashboard() {
                   key={item.id}
                   onClick={() => navigate(`/item/${item.id}`)}
                   className="bg-white rounded-2xl border p-4 flex items-start justify-between gap-3 cursor-pointer hover:shadow-sm active:scale-[0.99] transition-all"
-                  style={{ borderColor: '#E8E2D8' }}
+                  style={{ borderColor: '#DCE8F7' }}
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-1.5 mb-1">
                       <span className="text-xs px-2.5 py-0.5 rounded-full shrink-0"
-                        style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
+                        style={{ backgroundColor: '#F4F7FB', color: '#374151' }}>
                         {item.category}
                       </span>
                       {itemBadge(item.status)}
                     </div>
-                    <h3 className="font-semibold text-sm truncate" style={{ color: '#1C2B1E' }}>{item.title}</h3>
+                    <h3 className="font-semibold text-sm truncate" style={{ color: '#1A2C45' }}>{item.title}</h3>
                     {item.description && (
                       <p className="text-xs mt-0.5 line-clamp-1" style={{ color: '#9CA3AF' }}>{item.description}</p>
                     )}
@@ -337,18 +337,18 @@ export default function Dashboard() {
 
         {/* ══ SECTION 3: My Claims (as claimer) ══ */}
         <section>
-          <h2 className="text-base font-semibold mb-3 sm:mb-4" style={{ color: '#1C2B1E' }}>
+          <h2 className="text-base font-semibold mb-3 sm:mb-4" style={{ color: '#1A2C45' }}>
             🙋 My Claims
             <span className="ml-2 text-sm font-normal" style={{ color: '#9CA3AF' }}>({myClaims.length})</span>
           </h2>
 
           {myClaims.length === 0 ? (
             <div className="rounded-2xl p-6 sm:p-8 text-center border border-dashed"
-              style={{ backgroundColor: '#FFFFFF', borderColor: '#D1C9BB' }}>
+              style={{ backgroundColor: '#FFFFFF', borderColor: '#DCE8F7' }}>
               <p className="text-3xl mb-2">📋</p>
               <p className="text-sm" style={{ color: '#6B7280' }}>You haven't claimed any found items yet.</p>
               <button onClick={() => navigate('/')}
-                className="mt-3 text-sm hover:underline active:opacity-70" style={{ color: '#2D6A4F' }}>
+                className="mt-3 text-sm hover:underline active:opacity-70" style={{ color: '#1976D2' }}>
                 Browse found items →
               </button>
             </div>
@@ -358,18 +358,18 @@ export default function Dashboard() {
                 <div
                   key={claim.id}
                   className="bg-white rounded-2xl border p-4"
-                  style={{ borderColor: '#E8E2D8' }}
+                  style={{ borderColor: '#DCE8F7' }}
                 >
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-1.5 mb-1">
                         <span className="text-xs px-2.5 py-0.5 rounded-full shrink-0"
-                          style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
+                          style={{ backgroundColor: '#F4F7FB', color: '#374151' }}>
                           {claim.found_items?.category}
                         </span>
                         {claimBadge(claim.status)}
                       </div>
-                      <h3 className="font-semibold text-sm truncate" style={{ color: '#1C2B1E' }}>
+                      <h3 className="font-semibold text-sm truncate" style={{ color: '#1A2C45' }}>
                         {claim.found_items?.title}
                       </h3>
                       <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
@@ -383,7 +383,7 @@ export default function Dashboard() {
                     <button
                       onClick={() => navigate(`/chat/${claim.id}`)}
                       className="w-full mt-1 text-white text-sm py-2.5 rounded-xl hover:opacity-90 active:scale-95 transition-all font-medium"
-                      style={{ backgroundColor: '#1C3829' }}
+                      style={{ backgroundColor: '#1565A7' }}
                     >
                       💬 Open Chat →
                     </button>
@@ -393,7 +393,7 @@ export default function Dashboard() {
                     <button
                       onClick={() => navigate(`/item/${claim.found_item_id}`)}
                       className="w-full mt-1 border text-sm py-2 rounded-xl hover:opacity-70 active:scale-95 transition-all"
-                      style={{ borderColor: '#E8E2D8', color: '#6B7280' }}
+                      style={{ borderColor: '#DCE8F7', color: '#6B7280' }}
                     >
                       View item →
                     </button>
@@ -406,18 +406,18 @@ export default function Dashboard() {
 
         {/* ══ SECTION 4: My Lost Reports ══ */}
         <section>
-          <h2 className="text-base font-semibold mb-3 sm:mb-4" style={{ color: '#1C2B1E' }}>
+          <h2 className="text-base font-semibold mb-3 sm:mb-4" style={{ color: '#1A2C45' }}>
             🔍 My Lost Reports
             <span className="ml-2 text-sm font-normal" style={{ color: '#9CA3AF' }}>({lostItems.length})</span>
           </h2>
 
           {lostItems.length === 0 ? (
             <div className="rounded-2xl p-6 sm:p-8 text-center border border-dashed"
-              style={{ backgroundColor: '#FFFFFF', borderColor: '#D1C9BB' }}>
+              style={{ backgroundColor: '#FFFFFF', borderColor: '#DCE8F7' }}>
               <p className="text-3xl mb-2">📋</p>
               <p className="text-sm" style={{ color: '#6B7280' }}>You haven't reported any lost items yet.</p>
               <button onClick={() => navigate('/report-lost')}
-                className="mt-3 text-sm hover:underline active:opacity-70" style={{ color: '#2D6A4F' }}>
+                className="mt-3 text-sm hover:underline active:opacity-70" style={{ color: '#1976D2' }}>
                 Report something lost →
               </button>
             </div>
@@ -427,17 +427,17 @@ export default function Dashboard() {
                 <div
                   key={item.id}
                   className="bg-white rounded-2xl border p-4 flex items-start justify-between gap-3"
-                  style={{ borderColor: '#E8E2D8' }}
+                  style={{ borderColor: '#DCE8F7' }}
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-1.5 mb-1">
                       <span className="text-xs px-2.5 py-0.5 rounded-full shrink-0"
-                        style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
+                        style={{ backgroundColor: '#F4F7FB', color: '#374151' }}>
                         {item.category}
                       </span>
                       {itemBadge(item.status)}
                     </div>
-                    <h3 className="font-semibold text-sm truncate" style={{ color: '#1C2B1E' }}>{item.title}</h3>
+                    <h3 className="font-semibold text-sm truncate" style={{ color: '#1A2C45' }}>{item.title}</h3>
                     {item.description && (
                       <p className="text-xs mt-0.5 line-clamp-1" style={{ color: '#9CA3AF' }}>{item.description}</p>
                     )}

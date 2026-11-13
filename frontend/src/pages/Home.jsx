@@ -30,10 +30,11 @@ function ActionCard({ icon, iconBg, iconColor, label, sub, onClick }) {
       onClick={onClick}
       disabled={!onClick}
       className={`
-        text-left bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-[#E8E2D8]
+        text-left bg-white rounded-2xl p-4 sm:p-5 shadow-sm border
         transition-all duration-150
         ${onClick ? 'hover:shadow-md hover:-translate-y-0.5 cursor-pointer active:scale-95' : 'opacity-60 cursor-default'}
       `}
+      style={{ borderColor: '#DCE8F7' }}
     >
       <div
         className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-lg sm:text-xl mb-2 sm:mb-3"
@@ -41,7 +42,7 @@ function ActionCard({ icon, iconBg, iconColor, label, sub, onClick }) {
       >
         {icon}
       </div>
-      <p className="text-xs sm:text-sm font-bold leading-snug" style={{ color: '#1C3829' }}>{label}</p>
+      <p className="text-xs sm:text-sm font-bold leading-snug" style={{ color: '#1A2C45' }}>{label}</p>
       <p className="text-[10px] sm:text-xs mt-0.5 leading-snug" style={{ color: '#6B7280' }}>{sub}</p>
     </button>
   )
@@ -52,7 +53,8 @@ function ItemCard({ item, tab, onClick }) {
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-2xl p-4 sm:p-5 border border-[#E8E2D8] cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5 active:scale-[0.99] group"
+      className="bg-white rounded-2xl p-4 sm:p-5 border cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5 active:scale-[0.99] group"
+      style={{ borderColor: '#DCE8F7' }}
     >
       <div className="flex items-start justify-between mb-3">
         <div
@@ -71,16 +73,16 @@ function ItemCard({ item, tab, onClick }) {
         )}
       </div>
       <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: cs.color }}>{item.category}</p>
-      <h3 className="font-semibold text-sm mb-1 leading-snug" style={{ color: '#1C2B1E' }}>{item.title}</h3>
+      <h3 className="font-semibold text-sm mb-1 leading-snug" style={{ color: '#1A2C45' }}>{item.title}</h3>
       {item.description && (
         <p className="text-xs line-clamp-2 mb-3" style={{ color: '#6B7280' }}>{item.description}</p>
       )}
-      <div className="h-px mb-3" style={{ backgroundColor: '#F3F4F6' }} />
+      <div className="h-px mb-3" style={{ backgroundColor: '#DCE8F7' }} />
       <div className="flex items-center justify-between text-xs" style={{ color: '#9CA3AF' }}>
         <span className="truncate mr-2">📍 {item.location}</span>
         <span className="shrink-0">{formatDate(item.created_at)}</span>
       </div>
-      <p className="mt-3 text-xs font-semibold text-right transition-colors group-hover:opacity-80" style={{ color: '#1C3829' }}>
+      <p className="mt-3 text-xs font-semibold text-right transition-colors group-hover:opacity-80" style={{ color: '#1565A7' }}>
         {tab === 'found' ? (item.status === 'claimed' ? 'View details →' : 'Is this yours? →') : 'See details →'}
       </p>
     </div>
@@ -147,21 +149,21 @@ export default function Home() {
       ? { icon: '🛡️', iconBg: '#EDE9FE', iconColor: '#5B21B6', label: 'Admin Panel', sub: 'Manage portal', onClick: () => navigate('/admin') }
       : profile?.role === 'security'
       ? { icon: '🚨', iconBg: '#FEE2E2', iconColor: '#991B1B', label: 'Security Desk', sub: 'Escalated items', onClick: () => navigate('/security') }
-      : { icon: '💡', iconBg: '#FEF3C7', iconColor: '#92400E', label: 'How it works', sub: 'Find → Claim → Chat → Return', onClick: null },
+      : { icon: '💡', iconBg: '#EAF4FF', iconColor: '#1565A7', label: 'How it works', sub: 'Find → Report → Security → Return', onClick: null },
   ]
 
   const chipCategories = CATEGORIES.slice(0, 5)
   const hasFilters = filterCategory || filterLocation || search
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F4F7FB' }}>
 
       {/* ── Hero ── */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-5 sm:pt-6 pb-6 sm:pb-8">
-        <div className="rounded-2xl sm:rounded-3xl p-5 sm:p-8" style={{ backgroundColor: '#1C3829' }}>
+        <div className="rounded-2xl sm:rounded-3xl p-5 sm:p-8" style={{ backgroundColor: '#1565A7' }}>
 
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2 sm:mb-3" style={{ color: '#52B788' }}>
-            Campus Lost &amp; Found Board
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2 sm:mb-3" style={{ color: '#93C6F0' }}>
+            NIT Jalandhar · Campus Lost &amp; Found
           </p>
 
           <h1
@@ -170,7 +172,7 @@ export default function Home() {
           >
             {profile ? `Hey, ${profile.name.split(' ')[0]} 👋` : 'Something lost? Someone found it.'}
           </h1>
-          <p className="text-xs sm:text-sm mb-4 sm:mb-6" style={{ color: '#95C4A5' }}>
+          <p className="text-xs sm:text-sm mb-4 sm:mb-6" style={{ color: '#BFDBFE' }}>
             {profile ? 'Someone on campus might have found your stuff.' : 'Browse items found on campus or sign in to post.'}
           </p>
 
@@ -179,14 +181,14 @@ export default function Home() {
               <button
                 onClick={() => navigate('/report-found')}
                 className="flex items-center gap-2 text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full transition-opacity hover:opacity-90 active:scale-95"
-                style={{ backgroundColor: '#D4782A', color: '#fff' }}
+                style={{ backgroundColor: '#fff', color: '#1565A7' }}
               >
                 <span>+</span> Post a found item
               </button>
               <button
                 onClick={() => navigate('/report-lost')}
                 className="flex items-center gap-2 text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border transition-all hover:bg-white/10 active:scale-95"
-                style={{ borderColor: '#52B788', color: '#B7E4C7' }}
+                style={{ borderColor: '#93C6F0', color: '#BFDBFE' }}
               >
                 🔍 I lost something
               </button>
@@ -196,7 +198,7 @@ export default function Home() {
               <button
                 onClick={() => navigate('/login')}
                 className="text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full transition-opacity hover:opacity-90"
-                style={{ backgroundColor: '#D4782A', color: '#fff' }}
+                style={{ backgroundColor: '#fff', color: '#1565A7' }}
               >
                 Sign in to post or claim →
               </button>
@@ -213,7 +215,7 @@ export default function Home() {
               <div
                 key={s.label}
                 className="flex items-center gap-1.5 text-[10px] sm:text-xs font-medium px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full"
-                style={{ backgroundColor: 'rgba(255,255,255,0.08)', color: '#B7E4C7' }}
+                style={{ backgroundColor: 'rgba(255,255,255,0.12)', color: '#BFDBFE' }}
               >
                 <span>{s.icon}</span>{s.label}
               </div>
@@ -238,17 +240,17 @@ export default function Home() {
         <div className="flex items-center justify-between gap-4 mb-4 sm:mb-5">
           <h2
             className="text-lg sm:text-xl font-bold"
-            style={{ fontFamily: "'Lora', 'Georgia', serif", color: '#1C2B1E' }}
+            style={{ fontFamily: "'Lora', 'Georgia', serif", color: '#1A2C45' }}
           >
             Browse items
           </h2>
-          <div className="flex bg-white border border-[#E8E2D8] rounded-xl p-1 shrink-0">
+          <div className="flex bg-white border rounded-xl p-1 shrink-0" style={{ borderColor: '#DCE8F7' }}>
             {[{ key: 'found', label: '📦 Found' }, { key: 'lost', label: '🔍 Lost' }].map(t => (
               <button
                 key={t.key}
                 onClick={() => { setTab(t.key); setFilterCategory(''); setSearch('') }}
                 className="px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all"
-                style={tab === t.key ? { backgroundColor: '#1C3829', color: '#fff' } : { color: '#6B7280' }}
+                style={tab === t.key ? { backgroundColor: '#1565A7', color: '#fff' } : { color: '#6B7280' }}
               >
                 {t.label}
               </button>
@@ -264,8 +266,8 @@ export default function Home() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={`Search ${tab === 'found' ? 'found' : 'lost'} items…`}
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2"
-            style={{ backgroundColor: '#fff', borderColor: '#E8E2D8', color: '#1C2B1E' }}
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-[#1565A7]"
+            style={{ backgroundColor: '#fff', borderColor: '#DCE8F7', color: '#1A2C45' }}
           />
         </div>
 
@@ -275,8 +277,8 @@ export default function Home() {
             onClick={() => setFilterCategory('')}
             className="text-xs font-semibold px-3 py-1.5 rounded-full border transition-all"
             style={!filterCategory
-              ? { backgroundColor: '#1C3829', color: '#fff', borderColor: '#1C3829' }
-              : { backgroundColor: '#fff', color: '#374151', borderColor: '#E8E2D8' }}
+              ? { backgroundColor: '#1565A7', color: '#fff', borderColor: '#1565A7' }
+              : { backgroundColor: '#fff', color: '#374151', borderColor: '#DCE8F7' }}
           >
             All
           </button>
@@ -286,8 +288,8 @@ export default function Home() {
               onClick={() => setFilterCategory(filterCategory === c ? '' : c)}
               className="text-xs font-semibold px-3 py-1.5 rounded-full border transition-all"
               style={filterCategory === c
-                ? { backgroundColor: '#1C3829', color: '#fff', borderColor: '#1C3829' }
-                : { backgroundColor: '#fff', color: '#374151', borderColor: '#E8E2D8' }}
+                ? { backgroundColor: '#1565A7', color: '#fff', borderColor: '#1565A7' }
+                : { backgroundColor: '#fff', color: '#374151', borderColor: '#DCE8F7' }}
             >
               {getCatStyle(c).icon} {c}
             </button>
@@ -297,7 +299,7 @@ export default function Home() {
               value={filterCategory}
               onChange={e => setFilterCategory(e.target.value)}
               className="text-xs px-3 py-1.5 rounded-full border bg-white focus:outline-none"
-              style={{ borderColor: '#E8E2D8', color: '#374151' }}
+              style={{ borderColor: '#DCE8F7', color: '#374151' }}
             >
               <option value="">More…</option>
               {CATEGORIES.slice(5).map(c => <option key={c} value={c}>{c}</option>)}
@@ -305,13 +307,13 @@ export default function Home() {
           )}
         </div>
 
-        {/* Location + clear — own row so it's not crammed on mobile */}
+        {/* Location + clear */}
         <div className="flex items-center gap-2 mb-5">
           <select
             value={filterLocation}
             onChange={e => setFilterLocation(e.target.value)}
             className="flex-1 sm:flex-none text-xs px-3 py-1.5 rounded-full border bg-white focus:outline-none"
-            style={{ borderColor: '#E8E2D8', color: '#374151' }}
+            style={{ borderColor: '#DCE8F7', color: '#374151' }}
           >
             <option value="">📍 All locations</option>
             {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}

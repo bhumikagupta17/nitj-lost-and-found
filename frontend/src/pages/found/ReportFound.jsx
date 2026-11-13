@@ -4,8 +4,8 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../hooks/useAuth'
 import { LOCATIONS, CATEGORIES } from '../../lib/constants'
 
-const INPUT = 'w-full rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none placeholder-gray-400'
-const INPUT_STYLE = { border: '1px solid #E8E2D8', color: '#1C2B1E' }
+const INPUT = 'w-full rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1565A7] placeholder-gray-400'
+const INPUT_STYLE = { border: '1px solid #DCE8F7', color: '#1A2C45' }
 
 export default function ReportFound() {
   const navigate = useNavigate()
@@ -68,15 +68,15 @@ export default function ReportFound() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F4F7FB' }}>
 
       {/* Header */}
-      <div className="bg-white border-b" style={{ borderColor: '#E8E2D8' }}>
+      <div className="bg-white border-b" style={{ borderColor: '#DCE8F7' }}>
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-start justify-between gap-4">
           <div>
             <h1
               className="text-lg sm:text-xl font-bold leading-snug"
-              style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}
+              style={{ color: '#1A2C45', fontFamily: "'Lora','Georgia',serif" }}
             >
               Report a Found Item
             </h1>
@@ -87,7 +87,7 @@ export default function ReportFound() {
           <button
             onClick={() => navigate('/')}
             className="shrink-0 text-sm border px-3 py-1.5 rounded-xl hover:opacity-70 active:scale-95 transition-all"
-            style={{ borderColor: '#E8E2D8', color: '#6B7280' }}
+            style={{ borderColor: '#DCE8F7', color: '#6B7280' }}
           >
             ← Back
           </button>
@@ -99,8 +99,8 @@ export default function ReportFound() {
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
 
           {/* Photo upload */}
-          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #E8E2D8' }}>
-            <label className="block text-sm font-semibold mb-1" style={{ color: '#1C2B1E' }}>
+          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #DCE8F7' }}>
+            <label className="block text-sm font-semibold mb-1" style={{ color: '#1A2C45' }}>
               📷 Photo <span style={{ color: '#DC2626' }}>*</span>
             </label>
             <p className="text-xs mb-3" style={{ color: '#9CA3AF' }}>
@@ -112,13 +112,13 @@ export default function ReportFound() {
                   src={preview}
                   alt="Preview"
                   className="w-full max-h-52 sm:max-h-56 object-cover rounded-xl"
-                  style={{ border: '1px solid #E8E2D8' }}
+                  style={{ border: '1px solid #DCE8F7' }}
                 />
                 <button
                   type="button"
                   onClick={removePhoto}
                   className="absolute top-2 right-2 bg-white rounded-full w-7 h-7 flex items-center justify-center shadow text-xs font-bold hover:opacity-70 active:scale-95 transition-all"
-                  style={{ border: '1px solid #E8E2D8', color: '#6B7280' }}
+                  style={{ border: '1px solid #DCE8F7', color: '#6B7280' }}
                 >
                   ✕
                 </button>
@@ -126,9 +126,9 @@ export default function ReportFound() {
             ) : (
               <label
                 className="flex flex-col items-center justify-center border-2 border-dashed rounded-xl py-8 sm:py-10 cursor-pointer transition-colors"
-                style={{ borderColor: '#D1C9BB', backgroundColor: '#FDFCFA' }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = '#2D6A4F'}
-                onMouseLeave={e => e.currentTarget.style.borderColor = '#D1C9BB'}
+                style={{ borderColor: '#93C6F0', backgroundColor: '#F4F7FB' }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = '#1565A7'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = '#93C6F0'}
               >
                 <span className="text-3xl mb-2">📸</span>
                 <span className="text-sm" style={{ color: '#6B7280' }}>Tap to upload a photo</span>
@@ -139,8 +139,8 @@ export default function ReportFound() {
           </div>
 
           {/* Item title */}
-          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #E8E2D8' }}>
-            <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
+          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #DCE8F7' }}>
+            <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1A2C45' }}>
               Item Title <span style={{ color: '#DC2626' }}>*</span>
             </label>
             <input
@@ -155,8 +155,8 @@ export default function ReportFound() {
           </div>
 
           {/* Category */}
-          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #E8E2D8' }}>
-            <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
+          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #DCE8F7' }}>
+            <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1A2C45' }}>
               Category <span style={{ color: '#DC2626' }}>*</span>
             </label>
             <select
@@ -183,8 +183,8 @@ export default function ReportFound() {
           </div>
 
           {/* Location */}
-          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #E8E2D8' }}>
-            <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1C2B1E' }}>
+          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #DCE8F7' }}>
+            <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1A2C45' }}>
               Where did you find it? <span style={{ color: '#DC2626' }}>*</span>
             </label>
             <select
@@ -211,8 +211,8 @@ export default function ReportFound() {
           </div>
 
           {/* Description */}
-          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #E8E2D8' }}>
-            <label className="block text-sm font-semibold mb-1" style={{ color: '#1C2B1E' }}>
+          <div className="bg-white rounded-2xl p-4 sm:p-5" style={{ border: '1px solid #DCE8F7' }}>
+            <label className="block text-sm font-semibold mb-1" style={{ color: '#1A2C45' }}>
               Description <span style={{ color: '#DC2626' }}>*</span>
             </label>
             <p className="text-xs mb-2" style={{ color: '#9CA3AF' }}>
@@ -230,8 +230,8 @@ export default function ReportFound() {
           </div>
 
           {/* Info box */}
-          <div className="rounded-2xl p-4" style={{ backgroundColor: '#EEF9F4', border: '1px solid #B7DFC9' }}>
-            <p className="text-sm font-semibold mb-1.5" style={{ color: '#1C3829' }}>
+          <div className="rounded-2xl p-4" style={{ backgroundColor: '#EAF4FF', border: '1px solid #93C6F0' }}>
+            <p className="text-sm font-semibold mb-1.5" style={{ color: '#1A2C45' }}>
               🔒 How ownership verification works:
             </p>
             <ol className="space-y-1" style={{ listStyleType: 'decimal', paddingLeft: '1.2rem' }}>
@@ -241,7 +241,7 @@ export default function ReportFound() {
                 'You read their description and decide to accept or reject',
                 'Only after you accept does the claimer see the photo & get your contact',
               ].map((line, i) => (
-                <li key={i} className="text-xs" style={{ color: '#2D6A4F' }}>{line}</li>
+                <li key={i} className="text-xs" style={{ color: '#1976D2' }}>{line}</li>
               ))}
             </ol>
           </div>
@@ -261,7 +261,7 @@ export default function ReportFound() {
             type="submit"
             disabled={loading}
             className="w-full text-white font-semibold py-3 rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all text-sm sm:text-base"
-            style={{ backgroundColor: '#1C3829' }}
+            style={{ backgroundColor: '#1565A7' }}
           >
             {loading ? 'Uploading & posting…' : 'Post Found Item →'}
           </button>

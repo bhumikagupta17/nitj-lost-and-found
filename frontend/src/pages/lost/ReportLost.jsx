@@ -53,13 +53,13 @@ export default function ReportLost() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F4F7FB' }}>
 
       {/* Header */}
-      <div className="bg-white border-b px-4 sm:px-6 py-3 sm:py-4" style={{ borderColor: '#E8E2D8' }}>
+      <div className="bg-white border-b px-4 sm:px-6 py-3 sm:py-4" style={{ borderColor: '#DCE8F7' }}>
         <div className="max-w-xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-base sm:text-lg font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+            <h1 className="text-base sm:text-lg font-bold" style={{ color: '#1A2C45', fontFamily: "'Lora','Georgia',serif" }}>
               😟 Report a Lost Item
             </h1>
             <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
@@ -74,7 +74,8 @@ export default function ReportLost() {
       <div className="max-w-xl mx-auto px-4 sm:px-6 py-6">
 
         {/* Info banner */}
-        <div className="rounded-2xl px-4 py-3 mb-6 text-xs" style={{ backgroundColor: '#EEF9F4', border: '1px solid #B7DFC9', color: '#2D6A4F' }}>
+        <div className="rounded-2xl px-4 py-3 mb-6 text-xs"
+          style={{ backgroundColor: '#EAF4FF', border: '1px solid #93C6F0', color: '#1976D2' }}>
           <strong>How it works:</strong> File your report below. If a matching found item is registered and collected by security,
           you'll get a notification to visit the Security Desk with your ID to collect it.
         </div>
@@ -91,8 +92,8 @@ export default function ReportLost() {
               value={form.title}
               onChange={e => set('title', e.target.value)}
               placeholder="e.g. Black OnePlus phone, Blue Jansport bag"
-              className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
-              style={{ border: '1.5px solid #E8E2D8', color: '#1C2B1E', backgroundColor: '#fff' }}
+              className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1565A7]"
+              style={{ border: '1.5px solid #DCE8F7', color: '#1A2C45', backgroundColor: '#fff' }}
               maxLength={120}
             />
           </div>
@@ -110,8 +111,8 @@ export default function ReportLost() {
                   onClick={() => set('category', cat)}
                   className="text-xs px-3 py-1.5 rounded-full border transition-all active:scale-95"
                   style={form.category === cat
-                    ? { backgroundColor: '#1C3829', color: '#fff', borderColor: '#1C3829' }
-                    : { backgroundColor: '#fff', color: '#374151', borderColor: '#E8E2D8' }
+                    ? { backgroundColor: '#1565A7', color: '#fff', borderColor: '#1565A7' }
+                    : { backgroundColor: '#fff', color: '#374151', borderColor: '#DCE8F7' }
                   }
                 >
                   {cat}
@@ -130,8 +131,8 @@ export default function ReportLost() {
               onChange={e => set('description', e.target.value)}
               placeholder="Colour, brand, distinguishing marks, what was inside, etc."
               rows={3}
-              className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none resize-none"
-              style={{ border: '1.5px solid #E8E2D8', color: '#1C2B1E', backgroundColor: '#fff' }}
+              className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1565A7] resize-none"
+              style={{ border: '1.5px solid #DCE8F7', color: '#1A2C45', backgroundColor: '#fff' }}
               maxLength={500}
             />
           </div>
@@ -146,8 +147,8 @@ export default function ReportLost() {
               value={form.last_seen_location}
               onChange={e => set('last_seen_location', e.target.value)}
               placeholder="e.g. Library, Block 3 classroom, Canteen"
-              className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
-              style={{ border: '1.5px solid #E8E2D8', color: '#1C2B1E', backgroundColor: '#fff' }}
+              className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1565A7]"
+              style={{ border: '1.5px solid #DCE8F7', color: '#1A2C45', backgroundColor: '#fff' }}
               maxLength={120}
             />
           </div>
@@ -162,18 +163,20 @@ export default function ReportLost() {
               value={form.lost_date}
               onChange={e => set('lost_date', e.target.value)}
               max={new Date().toISOString().split('T')[0]}
-              className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
-              style={{ border: '1.5px solid #E8E2D8', color: '#1C2B1E', backgroundColor: '#fff' }}
+              className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1565A7]"
+              style={{ border: '1.5px solid #DCE8F7', color: '#1A2C45', backgroundColor: '#fff' }}
             />
           </div>
 
           {/* Privacy note */}
-          <div className="rounded-xl px-4 py-3 text-xs" style={{ backgroundColor: '#F5F0E8', border: '1px solid #E8E2D8', color: '#6B7280' }}>
+          <div className="rounded-xl px-4 py-3 text-xs"
+            style={{ backgroundColor: '#F4F7FB', border: '1px solid #DCE8F7', color: '#6B7280' }}>
             📋 Your name and department will be visible on the portal so security can verify and contact you if needed.
           </div>
 
           {error && (
-            <div className="rounded-xl px-4 py-3 text-xs" style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#DC2626' }}>
+            <div className="rounded-xl px-4 py-3 text-xs"
+              style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#DC2626' }}>
               {error}
             </div>
           )}
@@ -182,7 +185,7 @@ export default function ReportLost() {
             type="submit"
             disabled={submitting}
             className="w-full text-white font-semibold py-3 rounded-xl hover:opacity-90 disabled:opacity-50 active:scale-95 transition-all text-sm"
-            style={{ backgroundColor: '#1C3829' }}
+            style={{ backgroundColor: '#1565A7' }}
           >
             {submitting ? 'Submitting…' : 'Submit Lost Report'}
           </button>

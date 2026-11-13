@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../hooks/useAuth'
 
-const INPUT = 'w-full border border-[#E8E2D8] rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1C3829] placeholder-gray-400'
+const INPUT = 'w-full border border-[#DCE8F7] rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1565A7] placeholder-gray-400'
 
 export default function ClaimForm() {
   const { id } = useParams()
@@ -66,7 +66,7 @@ export default function ClaimForm() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F0E8' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F4F7FB' }}>
         <p className="text-sm" style={{ color: '#9CA3AF' }}>Loading...</p>
       </div>
     )
@@ -74,14 +74,14 @@ export default function ClaimForm() {
 
   if (error && !item) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F0E8' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F4F7FB' }}>
         <div className="text-center px-6">
           <p className="text-2xl mb-2">😕</p>
           <p className="text-sm" style={{ color: '#6B7280' }}>{error}</p>
           <button
             onClick={() => navigate('/')}
             className="mt-4 text-sm hover:underline active:opacity-70"
-            style={{ color: '#1C3829' }}
+            style={{ color: '#1565A7' }}
           >
             ← Back to home
           </button>
@@ -100,10 +100,10 @@ export default function ClaimForm() {
       : "Describe the item in detail — colour, brand, markings, what's inside or attached, anything unique..."
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F4F7FB' }}>
 
       {/* Header */}
-      <div className="bg-white border-b" style={{ borderColor: '#E8E2D8' }}>
+      <div className="bg-white border-b" style={{ borderColor: '#DCE8F7' }}>
         <div className="max-w-xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <button
             onClick={() => navigate(`/item/${id}`)}
@@ -119,11 +119,11 @@ export default function ClaimForm() {
       <div className="max-w-xl mx-auto px-4 sm:px-6 py-5 sm:py-8 space-y-3 sm:space-y-4">
 
         {/* Item summary */}
-        <div className="bg-white rounded-2xl border p-4 sm:p-5" style={{ borderColor: '#E8E2D8' }}>
+        <div className="bg-white rounded-2xl border p-4 sm:p-5" style={{ borderColor: '#DCE8F7' }}>
           <p className="text-xs uppercase tracking-wide mb-2" style={{ color: '#9CA3AF' }}>You are claiming</p>
           <h2
             className="text-base font-bold leading-snug"
-            style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}
+            style={{ color: '#1A2C45', fontFamily: "'Lora','Georgia',serif" }}
           >
             {item.title}
           </h2>
@@ -132,7 +132,7 @@ export default function ClaimForm() {
               <span
                 key={tag}
                 className="text-xs px-2.5 py-1 rounded-full"
-                style={{ backgroundColor: '#F5F0E8', color: '#374151' }}
+                style={{ backgroundColor: '#F4F7FB', color: '#374151' }}
               >
                 {tag}
               </span>
@@ -144,9 +144,9 @@ export default function ClaimForm() {
         </div>
 
         {/* How it works */}
-        <div className="rounded-2xl p-4" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}>
-          <p className="text-sm font-semibold mb-2" style={{ color: '#92400E' }}>📋 How this works</p>
-          <ul className="space-y-1.5 text-xs" style={{ color: '#B45309' }}>
+        <div className="rounded-2xl p-4" style={{ backgroundColor: '#EAF4FF', border: '1px solid #93C6F0' }}>
+          <p className="text-sm font-semibold mb-2" style={{ color: '#1565A7' }}>📋 How this works</p>
+          <ul className="space-y-1.5 text-xs" style={{ color: '#1976D2' }}>
             <li>→ Describe the item from memory — colour, brand, what's inside, any unique marks</li>
             <li>→ The finder will read your description and decide if it matches</li>
             <li>→ If accepted, the photo is revealed and you can chat to arrange handover</li>
@@ -156,8 +156,8 @@ export default function ClaimForm() {
 
         {/* Proof form */}
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-          <div className="bg-white rounded-2xl border p-4 sm:p-5" style={{ borderColor: '#E8E2D8' }}>
-            <label className="block text-sm font-semibold mb-1" style={{ color: '#1C2B1E' }}>
+          <div className="bg-white rounded-2xl border p-4 sm:p-5" style={{ borderColor: '#DCE8F7' }}>
+            <label className="block text-sm font-semibold mb-1" style={{ color: '#1A2C45' }}>
               Describe the item to prove it's yours <span className="text-red-500">*</span>
             </label>
             <p className="text-xs mb-3" style={{ color: '#9CA3AF' }}>
@@ -172,7 +172,7 @@ export default function ClaimForm() {
             />
             <div className="flex justify-between mt-1.5">
               <span className="text-xs" style={{
-                color: proof.trim().length < 20 ? '#9CA3AF' : '#2D6A4F'
+                color: proof.trim().length < 20 ? '#9CA3AF' : '#1976D2'
               }}>
                 {proof.trim().length < 20
                   ? `${20 - proof.trim().length} more characters needed`
@@ -185,7 +185,7 @@ export default function ClaimForm() {
           {/* Warning */}
           <div
             className="rounded-2xl p-4 text-xs"
-            style={{ backgroundColor: '#F5F0E8', color: '#6B7280' }}
+            style={{ backgroundColor: '#F4F7FB', color: '#6B7280' }}
           >
             ⚠️ False claims are a violation of NITJ rules. Only submit if this item genuinely belongs to you.
           </div>
@@ -203,7 +203,7 @@ export default function ClaimForm() {
               type="button"
               onClick={() => navigate(`/item/${id}`)}
               className="flex-1 border py-3 rounded-xl text-sm hover:opacity-70 active:scale-95 transition-all"
-              style={{ borderColor: '#E8E2D8', color: '#6B7280' }}
+              style={{ borderColor: '#DCE8F7', color: '#6B7280' }}
             >
               Cancel
             </button>
@@ -211,7 +211,7 @@ export default function ClaimForm() {
               type="submit"
               disabled={submitting || proof.trim().length < 20}
               className="flex-1 text-white font-semibold py-3 rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all text-sm"
-              style={{ backgroundColor: '#1C3829' }}
+              style={{ backgroundColor: '#1565A7' }}
             >
               {submitting ? 'Submitting...' : 'Submit Claim →'}
             </button>

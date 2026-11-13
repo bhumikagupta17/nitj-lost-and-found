@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 
-const INPUT = 'w-full border border-[#E8E2D8] rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1C3829] placeholder-gray-400'
+const INPUT = 'w-full border rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1565A7] placeholder-gray-400'
+const INPUT_STYLE = { borderColor: '#DCE8F7', color: '#1A2C45' }
 
 export default function Login() {
   const navigate = useNavigate()
@@ -69,94 +70,109 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8" style={{ backgroundColor: '#F5F0E8' }}>
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F4F7FB' }}>
 
-        {/* Logo mark */}
-        <div className="flex flex-col items-center mb-6 sm:mb-8">
-          <div
-            className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-xl sm:text-2xl mb-3"
-            style={{ backgroundColor: '#1C3829' }}
-          >
-            🏫
-          </div>
-          <h1
-            className="text-lg sm:text-xl font-bold"
-            style={{ color: '#1C3829', fontFamily: "'Lora', 'Georgia', serif" }}
-          >
-            NITJ Lost &amp; Found
-          </h1>
-          <p className="text-sm mt-1" style={{ color: '#6B7280' }}>
-            {isSignUp ? 'Create your campus account' : 'Sign in to your account'}
-          </p>
+      {/* NITJ top bar */}
+      <div className="hidden sm:flex items-center justify-between px-6 py-1.5 text-xs"
+        style={{ backgroundColor: '#0D3B6E', color: '#93C6F0' }}>
+        <span>Dr B.R. Ambedkar National Institute of Technology Jalandhar</span>
+        <span>Institute of National Importance · Est. 1987</span>
+      </div>
+
+      {/* Blue header strip */}
+      <div className="flex items-center gap-3 px-6 py-3" style={{ backgroundColor: '#1565A7' }}>
+        <div className="w-9 h-9 rounded-full flex items-center justify-center border-2 border-white/30"
+          style={{ backgroundColor: '#0D3B6E' }}>
+          <span className="text-base leading-none">🎓</span>
         </div>
+        <div>
+          <p className="text-sm font-bold text-white leading-tight">Lost &amp; Found Portal</p>
+          <p className="text-[11px] leading-tight" style={{ color: '#93C6F0' }}>NITJ · Campus Services</p>
+        </div>
+      </div>
 
-        <div className="bg-white rounded-2xl border border-[#E8E2D8] p-5 sm:p-8 shadow-sm">
+      {/* Form area */}
+      <div className="flex-1 flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-md">
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl mb-5">
-              {error}
-            </div>
-          )}
+          {/* Card header */}
+          <div className="text-center mb-6">
+            <h1 className="text-xl font-bold" style={{ color: '#1A2C45', fontFamily: "'Lora','Georgia',serif" }}>
+              {isSignUp ? 'Create Account' : 'Sign In'}
+            </h1>
+            <p className="text-sm mt-1" style={{ color: '#607D8B' }}>
+              {isSignUp ? 'Register with your NITJ email to get started' : 'Access the NITJ Lost & Found Portal'}
+            </p>
+          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="bg-white rounded-2xl border p-6 sm:p-8 shadow-sm" style={{ borderColor: '#DCE8F7' }}>
 
-            {isSignUp && (
-              <>
-                <input
-                  name="name" type="text" placeholder="Full Name"
-                  value={form.name} onChange={handleChange} required
-                  className={INPUT}
-                />
-                <input
-                  name="roll_no" type="text" placeholder="Roll Number (e.g. 22103001)"
-                  value={form.roll_no} onChange={handleChange}
-                  className={INPUT}
-                />
-                <input
-                  name="department" type="text" placeholder="Department (e.g. Computer Science)"
-                  value={form.department} onChange={handleChange}
-                  className={INPUT}
-                />
-              </>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl mb-5">
+                {error}
+              </div>
             )}
 
-            <input
-              name="email" type="email" placeholder="you@nitj.ac.in"
-              value={form.email} onChange={handleChange} required
-              className={INPUT}
-            />
-            <input
-              name="password" type="password" placeholder="Password"
-              value={form.password} onChange={handleChange} required
-              className={INPUT}
-            />
+            <form onSubmit={handleSubmit} className="space-y-3">
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full text-white font-semibold py-3 rounded-xl transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 mt-2"
-              style={{ backgroundColor: '#1C3829' }}
-            >
-              {loading ? 'Please wait…' : isSignUp ? 'Create Account' : 'Sign In'}
-            </button>
-          </form>
+              {isSignUp && (
+                <>
+                  <input
+                    name="name" type="text" placeholder="Full Name"
+                    value={form.name} onChange={handleChange} required
+                    className={INPUT} style={INPUT_STYLE}
+                  />
+                  <input
+                    name="roll_no" type="text" placeholder="Roll Number (e.g. 22103001)"
+                    value={form.roll_no} onChange={handleChange}
+                    className={INPUT} style={INPUT_STYLE}
+                  />
+                  <input
+                    name="department" type="text" placeholder="Department (e.g. Computer Science)"
+                    value={form.department} onChange={handleChange}
+                    className={INPUT} style={INPUT_STYLE}
+                  />
+                  <div className="h-px" style={{ backgroundColor: '#DCE8F7' }} />
+                </>
+              )}
 
-          <p className="text-center text-sm mt-5" style={{ color: '#6B7280' }}>
-            {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-            <button
-              onClick={() => { setIsSignUp(!isSignUp); setError('') }}
-              className="font-semibold hover:underline active:opacity-70"
-              style={{ color: '#1C3829' }}
-            >
-              {isSignUp ? 'Sign In' : 'Sign Up'}
-            </button>
+              <input
+                name="email" type="email" placeholder="you@nitj.ac.in"
+                value={form.email} onChange={handleChange} required
+                className={INPUT} style={INPUT_STYLE}
+              />
+              <input
+                name="password" type="password" placeholder="Password"
+                value={form.password} onChange={handleChange} required
+                className={INPUT} style={INPUT_STYLE}
+              />
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full text-white font-semibold py-3 rounded-xl transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 mt-1"
+                style={{ backgroundColor: '#1565A7' }}
+              >
+                {loading ? 'Please wait…' : isSignUp ? 'Create Account' : 'Sign In'}
+              </button>
+            </form>
+
+            <p className="text-center text-sm mt-5" style={{ color: '#6B7280' }}>
+              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+              <button
+                onClick={() => { setIsSignUp(!isSignUp); setError('') }}
+                className="font-semibold hover:underline active:opacity-70"
+                style={{ color: '#1565A7' }}
+              >
+                {isSignUp ? 'Sign In' : 'Sign Up'}
+              </button>
+            </p>
+          </div>
+
+          <p className="text-center text-xs mt-4" style={{ color: '#9CA3AF' }}>
+            Only @nitj.ac.in email addresses are allowed.
           </p>
         </div>
-
-        <p className="text-center text-xs mt-4" style={{ color: '#9CA3AF' }}>
-          Only @nitj.ac.in email addresses are allowed.
-        </p>
       </div>
     </div>
   )

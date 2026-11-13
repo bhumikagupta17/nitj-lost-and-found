@@ -11,7 +11,7 @@ const TABS = [
   { key: 'guards',   label: '🔐 Guards'     },
 ]
 
-const INPUT = 'border border-[#E8E2D8] rounded-xl px-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1C3829]'
+const INPUT = 'border border-[#DCE8F7] rounded-xl px-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1565A7]'
 
 export default function AdminPanel() {
   const navigate = useNavigate()
@@ -20,7 +20,7 @@ export default function AdminPanel() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F0E8' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F4F7FB' }}>
         <p className="text-sm" style={{ color: '#9CA3AF' }}>Loading...</p>
       </div>
     )
@@ -28,25 +28,25 @@ export default function AdminPanel() {
 
   if (!user || profile?.role !== 'admin') {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F0E8' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F4F7FB' }}>
         <div className="text-center">
           <p className="text-4xl mb-3">🚫</p>
           <p className="text-sm font-medium" style={{ color: '#374151' }}>Admin access only.</p>
           <button onClick={() => navigate('/')} className="mt-4 text-sm hover:underline active:scale-95 transition-all"
-            style={{ color: '#1C3829' }}>← Back to home</button>
+            style={{ color: '#1565A7' }}>← Back to home</button>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F4F7FB' }}>
 
       {/* Header */}
-      <div className="bg-white border-b px-4 sm:px-6 py-3 sm:py-4" style={{ borderColor: '#E8E2D8' }}>
+      <div className="bg-white border-b px-4 sm:px-6 py-3 sm:py-4" style={{ borderColor: '#DCE8F7' }}>
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-base sm:text-lg font-bold" style={{ color: '#1C2B1E', fontFamily: "'Lora','Georgia',serif" }}>
+            <h1 className="text-base sm:text-lg font-bold" style={{ color: '#1A2C45', fontFamily: "'Lora','Georgia',serif" }}>
               🛡️ Admin Panel
             </h1>
             <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>NITJ Lost &amp; Found — Admin Controls</p>
@@ -57,14 +57,14 @@ export default function AdminPanel() {
       </div>
 
       {/* Tab bar */}
-      <div className="bg-white border-b px-4 sm:px-6" style={{ borderColor: '#E8E2D8' }}>
+      <div className="bg-white border-b px-4 sm:px-6" style={{ borderColor: '#DCE8F7' }}>
         <div className="max-w-6xl mx-auto flex gap-1 overflow-x-auto">
           {TABS.map(t => (
             <button key={t.key} onClick={() => setTab(t.key)}
               className="px-3 sm:px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors"
               style={{
-                borderBottomColor: tab === t.key ? '#1C3829' : 'transparent',
-                color: tab === t.key ? '#1C3829' : '#6B7280',
+                borderBottomColor: tab === t.key ? '#1565A7' : 'transparent',
+                color: tab === t.key ? '#1565A7' : '#6B7280',
               }}>
               {t.label}
             </button>
@@ -116,9 +116,9 @@ function OverviewTab() {
   if (loading) return <Spinner />
 
   const cards = [
-    { label: 'Total Items Posted', value: stats.totalItems,    bg: '#EEF9F4', color: '#1C3829', icon: '📦' },
+    { label: 'Total Items Posted', value: stats.totalItems,    bg: '#EAF4FF', color: '#1565A7', icon: '📦' },
     { label: 'Active (Unclaimed)', value: stats.activeItems,   bg: '#ECFDF5', color: '#059669', icon: '🟢' },
-    { label: 'Returned (Closed)',  value: stats.closedItems,   bg: '#F5F0E8', color: '#374151', icon: '✅' },
+    { label: 'Returned (Closed)',  value: stats.closedItems,   bg: '#F4F7FB', color: '#374151', icon: '✅' },
     { label: 'Total Claims Filed', value: stats.totalClaims,   bg: '#FFFBEB', color: '#D97706', icon: '📋' },
     { label: 'Pending Claims',     value: stats.pendingClaims, bg: '#FFF7ED', color: '#C2410C', icon: '⏳' },
     { label: 'Registered Users',   value: stats.totalUsers,    bg: '#F5F3FF', color: '#7C3AED', icon: '👥' },
@@ -129,7 +129,7 @@ function OverviewTab() {
       <h2 className="text-sm font-bold mb-4" style={{ color: '#374151' }}>Portal Statistics</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         {cards.map(c => (
-          <div key={c.label} className="rounded-2xl p-4 sm:p-5 border" style={{ backgroundColor: c.bg, borderColor: '#E8E2D8' }}>
+          <div key={c.label} className="rounded-2xl p-4 sm:p-5 border" style={{ backgroundColor: c.bg, borderColor: '#DCE8F7' }}>
             <p className="text-xl sm:text-2xl mb-1">{c.icon}</p>
             <p className="text-2xl sm:text-3xl font-bold" style={{ color: c.color }}>{c.value ?? '—'}</p>
             <p className="text-xs mt-1" style={{ color: '#6B7280' }}>{c.label}</p>
@@ -183,7 +183,7 @@ function ItemsTab() {
     const map = {
       active:    { bg: '#ECFDF5', color: '#059669' },
       claimed:   { bg: '#FFFBEB', color: '#D97706' },
-      accepted:  { bg: '#EEF9F4', color: '#2D6A4F' },
+      accepted:  { bg: '#EAF4FF', color: '#1976D2' },
       closed:    { bg: '#F3F4F6', color: '#6B7280' },
       escalated: { bg: '#FEF2F2', color: '#DC2626' },
     }
@@ -199,7 +199,7 @@ function ItemsTab() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-bold" style={{ color: '#374151' }}>All Found Items</h2>
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-          className="border border-[#E8E2D8] rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none">
+          className="border border-[#DCE8F7] rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none">
           <option value="">All Statuses</option>
           {['active','claimed','closed','escalated'].map(s => <option key={s} value={s}>{s}</option>)}
         </select>
@@ -208,11 +208,11 @@ function ItemsTab() {
         <div className="space-y-3">
           {items.length === 0 && <p className="text-sm text-center py-10" style={{ color: '#9CA3AF' }}>No items found.</p>}
           {items.map(item => (
-            <div key={item.id} className="bg-white rounded-2xl border p-4" style={{ borderColor: '#E8E2D8' }}>
+            <div key={item.id} className="bg-white rounded-2xl border p-4" style={{ borderColor: '#DCE8F7' }}>
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-semibold truncate" style={{ color: '#1C2B1E' }}>{item.title}</p>
+                    <p className="text-sm font-semibold truncate" style={{ color: '#1A2C45' }}>{item.title}</p>
                     {statusChip(item.status)}
                   </div>
                   <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
@@ -228,7 +228,7 @@ function ItemsTab() {
                   {item.status !== 'closed' && (
                     <button onClick={() => forceClose(item.id)} disabled={actionLoading === item.id}
                       className="text-xs px-3 py-1.5 rounded-xl disabled:opacity-50 hover:opacity-70 active:scale-95 transition-all"
-                      style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
+                      style={{ backgroundColor: '#F4F7FB', color: '#374151' }}>
                       {actionLoading === item.id ? '...' : 'Force Close'}
                     </button>
                   )}
@@ -295,7 +295,7 @@ function ClaimsTab() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-bold" style={{ color: '#374151' }}>All Claims</h2>
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-          className="border border-[#E8E2D8] rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none">
+          className="border border-[#DCE8F7] rounded-xl px-3 py-1.5 text-sm bg-white focus:outline-none">
           <option value="">All Statuses</option>
           {['pending','accepted','rejected','closed'].map(s => <option key={s} value={s}>{s}</option>)}
         </select>
@@ -304,11 +304,11 @@ function ClaimsTab() {
         <div className="space-y-3">
           {claims.length === 0 && <p className="text-sm text-center py-10" style={{ color: '#9CA3AF' }}>No claims found.</p>}
           {claims.map(claim => (
-            <div key={claim.id} className="bg-white rounded-2xl border p-4" style={{ borderColor: '#E8E2D8' }}>
+            <div key={claim.id} className="bg-white rounded-2xl border p-4" style={{ borderColor: '#DCE8F7' }}>
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-semibold truncate" style={{ color: '#1C2B1E' }}>
+                    <p className="text-sm font-semibold truncate" style={{ color: '#1A2C45' }}>
                       {claim.found_items?.title || 'Unknown Item'}
                     </p>
                     {claimChip(claim.status)}
@@ -322,11 +322,11 @@ function ClaimsTab() {
                   </p>
                   {claim.proof_description && (
                     <details className="mt-2">
-                      <summary className="text-xs cursor-pointer hover:underline" style={{ color: '#1C3829' }}>
+                      <summary className="text-xs cursor-pointer hover:underline" style={{ color: '#1565A7' }}>
                         View description proof
                       </summary>
                       <p className="text-xs mt-1 p-2 rounded-xl leading-relaxed"
-                        style={{ backgroundColor: '#F5F0E8', color: '#374151' }}>
+                        style={{ backgroundColor: '#F4F7FB', color: '#374151' }}>
                         {claim.proof_description}
                       </p>
                     </details>
@@ -386,8 +386,8 @@ function UsersTab() {
     const map = {
       admin:    { bg: '#F5F3FF', color: '#7C3AED' },
       security: { bg: '#FEF2F2', color: '#DC2626' },
-      student:  { bg: '#F5F0E8', color: '#374151' },
-      faculty:  { bg: '#EEF9F4', color: '#2D6A4F' },
+      student:  { bg: '#F4F7FB', color: '#374151' },
+      faculty:  { bg: '#EAF4FF', color: '#1976D2' },
     }
     const s = map[role] || map.student
     return (
@@ -402,17 +402,17 @@ function UsersTab() {
         <h2 className="text-sm font-bold shrink-0" style={{ color: '#374151' }}>All Users ({users.length})</h2>
         <input type="text" value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Search by name / email / dept..."
-          className="border border-[#E8E2D8] rounded-xl px-3 py-1.5 text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-[#1C3829]" />
+          className="border border-[#DCE8F7] rounded-xl px-3 py-1.5 text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-[#1565A7]" />
       </div>
       {loading ? <Spinner /> : (
         <div className="space-y-2">
           {filtered.length === 0 && <p className="text-sm text-center py-10" style={{ color: '#9CA3AF' }}>No users found.</p>}
           {filtered.map(u => (
             <div key={u.id} className="bg-white rounded-2xl border p-4 flex items-center justify-between gap-3"
-              style={{ borderColor: '#E8E2D8' }}>
+              style={{ borderColor: '#DCE8F7' }}>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <p className="text-sm font-semibold" style={{ color: '#1C2B1E' }}>{u.name || 'Unnamed'}</p>
+                  <p className="text-sm font-semibold" style={{ color: '#1A2C45' }}>{u.name || 'Unnamed'}</p>
                   {roleBadge(u.role)}
                 </div>
                 <p className="text-xs mt-0.5 truncate" style={{ color: '#9CA3AF' }}>{u.email}</p>
@@ -424,7 +424,7 @@ function UsersTab() {
               </div>
               <select value={u.role} onChange={e => changeRole(u.id, e.target.value)}
                 disabled={actionLoading === u.id}
-                className="border border-[#E8E2D8] rounded-xl px-2 py-1.5 text-xs bg-white focus:outline-none disabled:opacity-50 shrink-0 active:scale-95 transition-all">
+                className="border border-[#DCE8F7] rounded-xl px-2 py-1.5 text-xs bg-white focus:outline-none disabled:opacity-50 shrink-0 active:scale-95 transition-all">
                 {['student','faculty','security','admin'].map(r => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
@@ -485,32 +485,32 @@ function GuardsTab() {
     <div>
       <h2 className="text-sm font-bold mb-1" style={{ color: '#374151' }}>Security Guard Whitelist</h2>
       <p className="text-xs mb-5" style={{ color: '#9CA3AF' }}>
-        Guards added here get the <code className="px-1 rounded" style={{ backgroundColor: '#F5F0E8' }}>security</code> role automatically
+        Guards added here get the <code className="px-1 rounded" style={{ backgroundColor: '#F4F7FB' }}>security</code> role automatically
         when they sign up. After adding, also set their role in the Users tab if they've already signed up.
       </p>
 
       <form onSubmit={addGuard} className="flex flex-col sm:flex-row gap-2 mb-5">
         <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)}
           placeholder="guard@nitj.ac.in" required
-          className="flex-1 border border-[#E8E2D8] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1C3829]" />
+          className="flex-1 border border-[#DCE8F7] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1565A7]" />
         <button type="submit" disabled={addLoading}
           className="shrink-0 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-50 active:scale-95 transition-all"
-          style={{ backgroundColor: '#1C3829' }}>
+          style={{ backgroundColor: '#1565A7' }}>
           {addLoading ? '...' : '+ Add Guard'}
         </button>
       </form>
 
       {error && <p className="text-xs text-red-500 mb-3">{error}</p>}
-      {success && <p className="text-xs mb-3" style={{ color: '#2D6A4F' }}>{success}</p>}
+      {success && <p className="text-xs mb-3" style={{ color: '#1976D2' }}>{success}</p>}
 
       {loading ? <Spinner /> : (
         <div className="space-y-2">
           {guards.length === 0 && <p className="text-sm text-center py-8" style={{ color: '#9CA3AF' }}>No guards added yet.</p>}
           {guards.map(g => (
             <div key={g.id} className="bg-white rounded-2xl border px-4 py-3 flex items-center justify-between gap-3"
-              style={{ borderColor: '#E8E2D8' }}>
+              style={{ borderColor: '#DCE8F7' }}>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate" style={{ color: '#1C2B1E' }}>{g.email}</p>
+                <p className="text-sm font-medium truncate" style={{ color: '#1A2C45' }}>{g.email}</p>
                 <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
                   Added {new Date(g.created_at).toLocaleDateString('en-IN')}
                 </p>
